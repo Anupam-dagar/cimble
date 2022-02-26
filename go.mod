@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/gin-gonic/gin v1.7.7
+	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/spf13/viper v1.10.1
 	gorm.io/driver/mysql v1.3.2
 	gorm.io/gorm v1.23.1
@@ -16,8 +17,9 @@ require (
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
-	github.com/golang-migrate/migrate v3.5.4+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/hashicorp/errwrap v1.0.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
@@ -35,6 +37,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
+	go.uber.org/atomic v1.6.0 // indirect
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
 	golang.org/x/sys v0.0.0-20220224120231-95c6836cb0e7 // indirect
 	golang.org/x/text v0.3.7 // indirect

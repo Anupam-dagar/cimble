@@ -9,7 +9,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/golang-migrate/migrate"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/mysql"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 const migrationQueriesPath = "./migrations/migration_queries"
@@ -46,7 +48,7 @@ func main() {
 		log.Fatalf("Error getting absolute migration queries file path. %v", err)
 	}
 
-	m, err := migrate.New(migrationQueriesAbsPath, databaseUrl)
+	m, err := migrate.New(fmt.Sprintf("file://%s", migrationQueriesAbsPath), databaseUrl)
 	if err != nil {
 		log.Fatalf("Error creating db connection: %v", err)
 		return
@@ -101,7 +103,7 @@ func runUpMigrations(m *migrate.Migrate) (err error) {
 
 func runDownMigrations(m *migrate.Migrate, numDownMigrations int) (err error) {
 	if numDownMigrations == -1 {
-		fmt.Printf("Provide number of down migrations to run.\n")
+		log.Fatalf("Provide number of down migrations to run.\n")
 		return
 	}
 
