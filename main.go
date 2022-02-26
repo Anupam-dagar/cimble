@@ -8,9 +8,22 @@ import (
 )
 
 func main() {
-	config, err := utilities.LoadEnvironmentVariables()
+
+	err := utilities.LoadEnvironmentVariables()
 	if err != nil {
 		fmt.Printf("Unable to load env variables: %v", err.Error())
+		return
+	}
+
+	config, err := utilities.GetEnvironmentVariables()
+	if err != nil {
+		fmt.Printf("Unable to get environment variables config %v", err.Error())
+		return
+	}
+
+	_, err = utilities.ConnectToDatabase()
+	if err != nil {
+		fmt.Printf("Unable to connect to database %v", err.Error())
 		return
 	}
 

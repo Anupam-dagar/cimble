@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func LoadEnvironmentVariables() (config models.Config, err error) {
+func LoadEnvironmentVariables() (err error) {
 	viper.AddConfigPath(".")
 	viper.SetConfigName("app")
 	viper.SetConfigType("env")
@@ -19,6 +19,20 @@ func LoadEnvironmentVariables() (config models.Config, err error) {
 		return
 	}
 
+	return
+}
+
+func GetEnvironmentVariables() (config models.Config, err error) {
 	err = viper.Unmarshal(&config)
+
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func GetEnvironmentVariableString(key string) (value string) {
+	value = viper.GetString(key)
 	return
 }
