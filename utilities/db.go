@@ -23,7 +23,7 @@ func ConstructDatabaseUrl() (dbUrl string) {
 	dbPassword := GetEnvironmentVariableString(string(constants.DB_PASSWORD))
 	dbName := GetEnvironmentVariableString(string(constants.DB_NAME))
 
-	dbUrl = fmt.Sprintf(`mysql://%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local`, dbUser, dbPassword, dbHost, dbPort, dbName)
+	dbUrl = fmt.Sprintf(`%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local`, dbUser, dbPassword, dbHost, dbPort, dbName)
 	fmt.Printf("DB_URL: %s\n", dbUrl)
 	return
 }

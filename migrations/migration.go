@@ -41,7 +41,7 @@ func main() {
 		return
 	}
 
-	databaseUrl := utilities.ConstructDatabaseUrl()
+	databaseUrl := fmt.Sprintf("mysql://%s", utilities.ConstructDatabaseUrl())
 
 	migrationQueriesAbsPath, err := filepath.Abs(migrationQueriesPath)
 	if err != nil {
