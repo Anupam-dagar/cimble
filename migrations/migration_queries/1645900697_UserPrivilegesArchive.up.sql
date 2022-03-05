@@ -1,5 +1,4 @@
 CREATE TABLE user_privileges_archive (
-    id varchar(255) NOT NULL,
     user_id varchar(255) NOT NULL,
     level_for ENUM('organisation', 'project') NOT NULL DEFAULT "project",
     level_id varchar(255) NOT NULL,
@@ -13,5 +12,5 @@ CREATE TABLE user_privileges_archive (
     updated_by varchar(255) NOT NULL,
     deleted_timestamp TIMESTAMP NOT NULL DEFAULT NOW(),
     deleted_by varchar(255) NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (user_id)
 ) ENGINE=InnoDB

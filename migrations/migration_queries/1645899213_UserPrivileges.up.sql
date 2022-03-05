@@ -1,5 +1,4 @@
 CREATE TABLE user_privileges (
-    id varchar(255) NOT NULL,
     user_id varchar(255) NOT NULL,
     level_for ENUM('organisation', 'project') NOT NULL DEFAULT "project",
     level_id varchar(255) NOT NULL,
@@ -11,5 +10,5 @@ CREATE TABLE user_privileges (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
     created_by varchar(255) NOT NULL,
     updated_by varchar(255) NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (user_id)
 ) ENGINE=InnoDB

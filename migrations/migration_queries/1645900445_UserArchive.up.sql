@@ -1,5 +1,5 @@
 CREATE TABLE user_archive (
-    id varchar(255) NOT NULL,
+    user_id varchar(255) NOT NULL,
     organisation_id varchar(255) NOT NULL,
     first_name varchar(255) NOT NULL,
     last_name varchar(255),
@@ -10,5 +10,5 @@ CREATE TABLE user_archive (
     updated_by varchar(255) NOT NULL,
     deleted_timestamp TIMESTAMP NOT NULL DEFAULT NOW(),
     deleted_by varchar(255) NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (user_id)
 ) ENGINE=InnoDB
