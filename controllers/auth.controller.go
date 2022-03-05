@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"cimble/models"
 	"cimble/services"
+	"cimble/utilities"
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,8 +32,22 @@ func (ac *AuthController) Login(ctx *gin.Context) {
 }
 
 func (ac *AuthController) SignUp(ctx *gin.Context) {
-	ac.AuthService.SignUp()
-	fmt.Println("SignUp Controller")
+	var signUpPayload models.SignUp
+	err := ctx.ShouldBindJSON(&signUpPayload)
+
+	if err != nil {
+		fmt.Printf("Error binding json: %v\n", err)
+		utilities.ResponseWithError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+
+	err = ac.AuthService.SignUp(signUpPayload)
+	if err != nil {
+		fmt.Printf("Error signing up user: %v\n", err)
+		utilities.ResponseWithError(ctx, http.StatusInternalServerError, err)
+	}
+
+	utilities.ResponseWithSuccess(ctx, http.StatusOK, signUpPayload)
 }
 
 func (ac *AuthController) Register(ctx *gin.Context) {

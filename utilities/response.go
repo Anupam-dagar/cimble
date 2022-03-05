@@ -1,0 +1,20 @@
+package utilities
+
+import (
+	"cimble/models"
+	"fmt"
+
+	"github.com/gin-gonic/gin"
+)
+
+func ResponseWithSuccess(ctx *gin.Context, code int, jsonObj interface{}) {
+	ctx.JSON(code, jsonObj)
+}
+
+func ResponseWithError(ctx *gin.Context, code int, err error) {
+	errorJson := models.ErrorResponse{
+		Code:    fmt.Sprint(code),
+		Message: err.Error(),
+	}
+	ctx.AbortWithStatusJSON(code, errorJson)
+}
