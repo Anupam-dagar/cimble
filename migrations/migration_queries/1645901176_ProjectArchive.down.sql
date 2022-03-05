@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS project_archive;
+DROP TABLE IF EXISTS project_archives;

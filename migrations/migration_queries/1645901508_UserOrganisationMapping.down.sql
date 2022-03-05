@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS user_organisation_mapping;
+DROP TABLE IF EXISTS user_organisation_mappings;

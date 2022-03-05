@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS user_privileges_archive;
+DROP TABLE IF EXISTS user_privileges_archives;

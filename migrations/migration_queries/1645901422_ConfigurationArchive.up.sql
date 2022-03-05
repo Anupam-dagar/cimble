@@ -1,4 +1,4 @@
-CREATE TABLE configuration_archive (
+CREATE TABLE configuration_archives (
     id varchar(255) NOT NULL,
     name varchar(255) NOT NULL,
     info varchar(255) NOT NULL,

@@ -1,4 +1,4 @@
-CREATE TABLE project_archive (
+CREATE TABLE project_archives (
     id varchar(255) NOT NULL,
     organisation_id varchar(255) NOT NULL,
     name varchar(255) NOT NULL,

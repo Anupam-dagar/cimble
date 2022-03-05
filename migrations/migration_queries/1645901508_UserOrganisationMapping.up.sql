@@ -1,4 +1,4 @@
-CREATE TABLE user_organisation_mapping (
+CREATE TABLE user_organisation_mappings (
     id varchar(255) NOT NULL,
     user_id varchar(255) NOT NULL,
     organisation_id varchar(255) NOT NULL,

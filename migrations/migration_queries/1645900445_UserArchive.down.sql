@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS user_archive;
+DROP TABLE IF EXISTS user_archives;

@@ -1,4 +1,4 @@
-CREATE TABLE organisation_archive (
+CREATE TABLE organisation_archives (
     id varchar(255) NOT NULL,
     name varchar(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),

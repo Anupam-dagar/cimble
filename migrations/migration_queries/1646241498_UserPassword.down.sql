@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS user_password;
+DROP TABLE IF EXISTS user_passwords;

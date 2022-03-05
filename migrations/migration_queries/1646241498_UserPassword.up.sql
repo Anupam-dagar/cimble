@@ -1,4 +1,4 @@
-CREATE TABLE user_password (
+CREATE TABLE user_passwords (
     user_id varchar(255) NOT NULL,
     password_hash char(128) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),

@@ -1,4 +1,4 @@
-CREATE TABLE user_privileges_archive (
+CREATE TABLE user_privileges_archives (
     user_id varchar(255) NOT NULL,
     level_for ENUM('organisation', 'project') NOT NULL DEFAULT "project",
     level_id varchar(255) NOT NULL,

@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS configuration_archive;
+DROP TABLE IF EXISTS configuration_archives;

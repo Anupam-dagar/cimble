@@ -1,4 +1,4 @@
-CREATE TABLE user_archive (
+CREATE TABLE user_archives (
     user_id varchar(255) NOT NULL,
     organisation_id varchar(255) NOT NULL,
     first_name varchar(255) NOT NULL,
