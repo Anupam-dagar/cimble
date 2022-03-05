@@ -8,12 +8,30 @@ import (
 	"gorm.io/gorm"
 )
 
+var db *gorm.DB
+
 func ConnectToDatabase() (*gorm.DB, error) {
+	var err error
 
 	dbUrl := ConstructDatabaseUrl()
-	db, err := gorm.Open(mysql.Open(dbUrl), &gorm.Config{})
+	db, err = gorm.Open(mysql.Open(dbUrl), &gorm.Config{})
 
 	return db, err
+}
+
+func DisconnectDatabase() {
+	fmt.Println(`Closing db connection...`)
+	dbInstance, err := db.DB()
+	if err != nil {
+		fmt.Printf(`Error closing db connection: %v`, err.Error())
+		return
+	}
+
+	dbInstance.Close()
+}
+
+func GetDatabase() *gorm.DB {
+	return db
 }
 
 func ConstructDatabaseUrl() (dbUrl string) {

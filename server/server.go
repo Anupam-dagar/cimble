@@ -37,6 +37,7 @@ func SetupServer() {
 	<-ctx.Done()
 
 	// Restore default behavior on the interrupt signal and notify user of shutdown.
+	utilities.DisconnectDatabase()
 	stop()
 	fmt.Println("shutting down gracefully, press Ctrl+C again to force")
 
