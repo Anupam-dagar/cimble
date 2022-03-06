@@ -1,6 +1,9 @@
 package models
 
-import "github.com/segmentio/ksuid"
+import (
+	"github.com/golang-jwt/jwt"
+	"github.com/segmentio/ksuid"
+)
 
 type SignUp struct {
 	FirstName string `json:"firstName" binding:"required"`
@@ -23,4 +26,10 @@ func (s SignUp) CreateUserEntity(createdBy string) User {
 type Login struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
+}
+
+type JwtClaims struct {
+	Email string `json:"email"`
+	Id    string `json:"id"`
+	jwt.StandardClaims
 }

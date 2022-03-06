@@ -35,14 +35,14 @@ func (ac *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	err = ac.AuthService.Login(loginPayload)
+	loginResponse, err := ac.AuthService.Login(loginPayload)
 	if err != nil {
 		fmt.Printf("Error login user: %v\n", err)
 		utilities.ResponseWithError(ctx, http.StatusInternalServerError, err)
 		return
 	}
 
-	utilities.ResponseWithSuccess(ctx, http.StatusOK, loginPayload)
+	utilities.ResponseWithSuccess(ctx, http.StatusOK, loginResponse)
 }
 
 func (ac *AuthController) SignUp(ctx *gin.Context) {
