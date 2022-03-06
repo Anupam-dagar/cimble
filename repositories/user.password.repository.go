@@ -9,6 +9,7 @@ import (
 
 type UserPasswordRepositoryInterface interface {
 	CreateUserPassword(models.UserPassword, *gorm.DB) error
+	GetUserPassword(string) ([]byte, error)
 }
 
 type UserPasswordRepository struct {
@@ -29,4 +30,16 @@ func (upr *UserPasswordRepository) CreateUserPassword(userPassword models.UserPa
 	err := tx.Create(&userPassword).Error
 
 	return err
+}
+
+func (upr *UserPasswordRepository) GetUserPassword(userEmail string) ([]byte, error) {
+	db := upr.db
+
+	var userPassword models.UserPassword
+
+	db.Joins("inner join users on users.id = user_passwords.user_id")
+	db.Where("users.email = ?", userEmail)
+	err := db.Find(&userPassword).Error
+
+	return userPassword.PasswordHash, err
 }

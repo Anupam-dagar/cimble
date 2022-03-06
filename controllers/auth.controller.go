@@ -27,8 +27,22 @@ func NewAuthController() AuthControllerInterface {
 }
 
 func (ac *AuthController) Login(ctx *gin.Context) {
-	ac.AuthService.Login()
-	fmt.Println("Login Controller")
+	var loginPayload models.Login
+	err := ctx.ShouldBindJSON(&loginPayload)
+	if err != nil {
+		fmt.Printf("Error binding json: %v\n", err)
+		utilities.ResponseWithError(ctx, http.StatusBadRequest, err)
+		return
+	}
+
+	err = ac.AuthService.Login(loginPayload)
+	if err != nil {
+		fmt.Printf("Error login user: %v\n", err)
+		utilities.ResponseWithError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+
+	utilities.ResponseWithSuccess(ctx, http.StatusOK, loginPayload)
 }
 
 func (ac *AuthController) SignUp(ctx *gin.Context) {
