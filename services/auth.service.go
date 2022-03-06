@@ -3,6 +3,7 @@ package services
 import (
 	"cimble/models"
 	"cimble/repositories"
+	"cimble/utilities"
 	"fmt"
 )
 
@@ -27,10 +28,18 @@ func (as *AuthService) Login() {
 }
 
 func (as *AuthService) SignUp(signUpPayload models.SignUp) (err error) {
-	user := signUpPayload.ToCreateUserEntity("test")
-	err = as.UserRepository.AddUser(user)
+	user := signUpPayload.CreateUserEntity("test")
+	passwordHash := utilities.GenerateSha512Hash(signUpPayload.Password)
+	userPassword := models.UserPassword{
+		UserId:       user.ID,
+		PasswordHash: passwordHash,
+		CreatedBy:    "test",
+		UpdatedBy:    "test",
+	}
 
-	return
+	err = as.UserRepository.AddUser(user, userPassword)
+
+	return err
 }
 
 func (as *AuthService) Register() {

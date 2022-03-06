@@ -37,7 +37,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 
 	if err != nil {
 		fmt.Printf("Error binding json: %v\n", err)
-		utilities.ResponseWithError(ctx, http.StatusInternalServerError, err)
+		utilities.ResponseWithError(ctx, http.StatusBadRequest, err)
 		return
 	}
 
@@ -45,6 +45,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 	if err != nil {
 		fmt.Printf("Error signing up user: %v\n", err)
 		utilities.ResponseWithError(ctx, http.StatusInternalServerError, err)
+		return
 	}
 
 	utilities.ResponseWithSuccess(ctx, http.StatusOK, signUpPayload)

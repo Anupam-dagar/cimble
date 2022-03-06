@@ -4,30 +4,39 @@ import (
 	"cimble/models"
 	"cimble/utilities"
 
-	"github.com/segmentio/ksuid"
 	"gorm.io/gorm"
 )
 
 type UserRepositoryInterface interface {
-	AddUser(models.User) error
+	AddUser(models.User, models.UserPassword) error
 }
 
 type UserRepository struct {
-	db *gorm.DB
+	db                     *gorm.DB
+	UserPasswordRepository UserPasswordRepositoryInterface
 }
 
 func NewUserRepository() UserRepositoryInterface {
 	ur := new(UserRepository)
 	ur.db = utilities.GetDatabase()
+	ur.UserPasswordRepository = NewUserPasswordRepository()
 	return ur
 }
 
-func (ur *UserRepository) AddUser(user models.User) error {
+func (ur *UserRepository) AddUser(user models.User, userPassword models.UserPassword) error {
 	db := ur.db
 
-	user.ID = ksuid.New().String()
-	user.UpdatedBy = user.CreatedBy
-	result := db.Create(&user)
+	err := db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&user).Error; err != nil {
+			return err
+		}
 
-	return result.Error
+		if err := ur.UserPasswordRepository.CreateUserPassword(userPassword, tx); err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return err
 }
