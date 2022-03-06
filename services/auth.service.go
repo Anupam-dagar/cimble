@@ -13,6 +13,8 @@ import (
 type AuthServiceInterface interface {
 	Login(models.Login) (models.LoginResponse, error)
 	SignUp(models.SignUp) error
+	ValidateToken(string) (*jwt.Token, error)
+	GenerateToken(string, string) (string, error)
 	Register()
 }
 
@@ -49,13 +51,13 @@ func (as *AuthService) Login(loginPayload models.Login) (loginResponse models.Lo
 }
 
 func (as *AuthService) SignUp(signUpPayload models.SignUp) (err error) {
-	user := signUpPayload.CreateUserEntity("test")
+	user := signUpPayload.CreateUserEntity("self")
 	passwordHash := utilities.GenerateSha512Hash(signUpPayload.Password)
 	userPassword := models.UserPassword{
 		UserId:       user.ID,
 		PasswordHash: passwordHash,
-		CreatedBy:    "test",
-		UpdatedBy:    "test",
+		CreatedBy:    "self",
+		UpdatedBy:    "self",
 	}
 
 	err = as.UserRepository.AddUser(user, userPassword)
@@ -88,4 +90,8 @@ func (as *AuthService) GenerateToken(email string, userId string) (string, error
 	}
 
 	return jwtToken, nil
+}
+
+func (as *AuthService) ValidateToken(jwtToken string) (*jwt.Token, error) {
+	return jwt.Parse(jwtToken, utilities.ParseJwt)
 }
