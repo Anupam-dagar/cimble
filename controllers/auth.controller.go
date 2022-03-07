@@ -13,6 +13,7 @@ import (
 type AuthControllerInterface interface {
 	Login(*gin.Context)
 	SignUp(*gin.Context)
+	RefreshToken(*gin.Context)
 	Register(*gin.Context)
 }
 
@@ -63,6 +64,24 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 	}
 
 	utilities.ResponseWithSuccess(ctx, http.StatusOK, signUpPayload)
+}
+
+func (ac *AuthController) RefreshToken(ctx *gin.Context) {
+	userId, ok := ctx.Get("id")
+	if !ok {
+		err := fmt.Errorf("invalid user id")
+		utilities.ResponseWithError(ctx, http.StatusBadRequest, err)
+		return
+	}
+
+	refreshTokenResponse, err := ac.AuthService.RefreshToken(fmt.Sprintf("%v", userId))
+	if err != nil {
+		fmt.Printf("Error generating token pair: %v\n", err)
+		utilities.ResponseWithError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+
+	utilities.ResponseWithSuccess(ctx, http.StatusOK, refreshTokenResponse)
 }
 
 func (ac *AuthController) Register(ctx *gin.Context) {

@@ -9,6 +9,7 @@ import (
 
 type UserRepositoryInterface interface {
 	AddUser(models.User, models.UserPassword) error
+	GetUserById(userId string) (models.User, error)
 }
 
 type UserRepository struct {
@@ -39,4 +40,12 @@ func (ur *UserRepository) AddUser(user models.User, userPassword models.UserPass
 	})
 
 	return err
+}
+
+func (ur *UserRepository) GetUserById(userId string) (user models.User, err error) {
+	db := ur.db
+
+	err = db.Find(&user, "id = ?", userId).Error
+
+	return user, err
 }

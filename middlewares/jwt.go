@@ -13,6 +13,13 @@ import (
 func AuthoriseJwt() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader("Authorization")
+		err := fmt.Errorf("unauthorised access")
+		if authHeader == "" {
+			fmt.Println("No jwt token")
+			utilities.ResponseWithError(ctx, http.StatusUnauthorized, err)
+			return
+		}
+
 		tokenString := authHeader[len("Bearer "):]
 
 		token, err := services.NewAuthService().ValidateToken(tokenString)
@@ -23,7 +30,7 @@ func AuthoriseJwt() gin.HandlerFunc {
 			return
 		}
 
-		fmt.Printf(`Invalid jwt token: %v\n`, err)
+		fmt.Printf("Invalid jwt token: %v\n", err)
 		utilities.ResponseWithError(ctx, http.StatusUnauthorized, err)
 	}
 }

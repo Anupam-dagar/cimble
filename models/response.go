@@ -6,15 +6,22 @@ type ErrorResponse struct {
 }
 
 type LoginResponse struct {
-	Id    string `json:"id"`
-	Email string `json:"email"`
-	Token string `json:"token"`
+	Id           string `json:"id"`
+	Email        string `json:"email"`
+	Token        string `json:"token"`
+	RefreshToken string `json:"refreshToken"`
 }
 
-func (lr LoginResponse) ConstructLoginResponse(user UserJoinUserPassword, token string) LoginResponse {
+func (lr LoginResponse) ConstructLoginResponse(
+	userId string,
+	email string,
+	token string,
+	refreshToken string,
+) LoginResponse {
 	return LoginResponse{
-		Id:    user.ID,
-		Email: user.Email,
-		Token: token,
+		Id:           userId,
+		Email:        email,
+		Token:        token,
+		RefreshToken: refreshToken,
 	}
 }

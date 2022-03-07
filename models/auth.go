@@ -33,3 +33,12 @@ type JwtClaims struct {
 	Id    string `json:"id"`
 	jwt.StandardClaims
 }
+
+type RefreshTokenClaims struct {
+	Id string `json:"id"`
+	jwt.StandardClaims
+}
+
+type RefreshToken struct {
+	RefreshToken string `json:"refreshToken" binding:"required"`
+}

@@ -14,7 +14,8 @@ type AuthServiceInterface interface {
 	Login(models.Login) (models.LoginResponse, error)
 	SignUp(models.SignUp) error
 	ValidateToken(string) (*jwt.Token, error)
-	GenerateToken(string, string) (string, error)
+	GenerateToken(string, string, int8) (string, error)
+	RefreshToken(string) (models.LoginResponse, error)
 	Register()
 }
 
@@ -45,9 +46,9 @@ func (as *AuthService) Login(loginPayload models.Login) (loginResponse models.Lo
 		return loginResponse, fmt.Errorf("either email or password is wrong")
 	}
 
-	token, err := as.GenerateToken(user.Email, user.ID)
+	loginResponse, err = as.generateLoginResponse(user.Email, user.ID)
 
-	return loginResponse.ConstructLoginResponse(user, token), err
+	return loginResponse, err
 }
 
 func (as *AuthService) SignUp(signUpPayload models.SignUp) (err error) {
@@ -69,12 +70,12 @@ func (as *AuthService) Register() {
 	fmt.Println("Register Service")
 }
 
-func (as *AuthService) GenerateToken(email string, userId string) (string, error) {
+func (as *AuthService) GenerateToken(email string, userId string, expiry int8) (string, error) {
 	claims := &models.JwtClaims{
 		Email: email,
 		Id:    userId,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 1).Unix(),
+			ExpiresAt: time.Now().Add(time.Hour * time.Duration(expiry)).Unix(),
 			Issuer:    "cimble",
 			IssuedAt:  time.Now().Unix(),
 		},
@@ -94,4 +95,28 @@ func (as *AuthService) GenerateToken(email string, userId string) (string, error
 
 func (as *AuthService) ValidateToken(jwtToken string) (*jwt.Token, error) {
 	return jwt.Parse(jwtToken, utilities.ParseJwt)
+}
+
+func (as *AuthService) RefreshToken(userId string) (loginResponse models.LoginResponse, err error) {
+	user, err := as.UserRepository.GetUserById(userId)
+	if err != nil {
+		fmt.Printf("Error getting user by id: %s, error: %v", userId, err)
+		return loginResponse, err
+	}
+
+	loginResponse, err = as.generateLoginResponse(user.Email, user.ID)
+
+	return loginResponse, err
+}
+
+func (as *AuthService) generateLoginResponse(email string, userId string) (loginResponse models.LoginResponse, err error) {
+	token, err := as.GenerateToken(email, userId, 1)
+	if err != nil {
+		fmt.Printf(`Error generating token: %v`, err)
+		return loginResponse, err
+	}
+
+	refreshToken, err := as.GenerateToken(email, userId, 24)
+
+	return loginResponse.ConstructLoginResponse(userId, email, token, refreshToken), err
 }
