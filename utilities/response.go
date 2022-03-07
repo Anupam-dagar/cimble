@@ -12,6 +12,7 @@ func ResponseWithSuccess(ctx *gin.Context, code int, jsonObj interface{}) {
 }
 
 func ResponseWithError(ctx *gin.Context, code int, err error) {
+	fmt.Println(err.Error())
 	errorJson := models.ErrorResponse{
 		Code:    fmt.Sprint(code),
 		Message: err.Error(),
