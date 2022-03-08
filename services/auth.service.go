@@ -57,8 +57,10 @@ func (as *AuthService) SignUp(signUpPayload models.SignUp) (err error) {
 	userPassword := models.UserPassword{
 		UserId:       user.ID,
 		PasswordHash: passwordHash,
-		CreatedBy:    "self",
-		UpdatedBy:    "self",
+		BaseEntity: models.BaseEntity{
+			CreatedBy: "self",
+			UpdatedBy: "self",
+		},
 	}
 
 	err = as.UserRepository.AddUser(user, userPassword)

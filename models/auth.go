@@ -18,8 +18,10 @@ func (s SignUp) CreateUserEntity(createdBy string) User {
 		FirstName: s.FirstName,
 		LastName:  s.LastName,
 		Email:     s.Email,
-		CreatedBy: createdBy,
-		UpdatedBy: createdBy,
+		BaseEntity: BaseEntity{
+			CreatedBy: createdBy,
+			UpdatedBy: createdBy,
+		},
 	}
 }
 

@@ -31,8 +31,10 @@ func (os *OrganisationService) CreateOrganisation(
 		ID:             ksuid.New().String(),
 		UserId:         createdBy,
 		OrganisationId: organisation.ID,
-		CreatedBy:      createdBy,
-		UpdatedBy:      createdBy,
+		BaseEntity: models.BaseEntity{
+			CreatedBy: createdBy,
+			UpdatedBy: createdBy,
+		},
 	}
 
 	err = os.OrganisationRepository.CreateOrganisation(organisation, userOrganisationMapping)
