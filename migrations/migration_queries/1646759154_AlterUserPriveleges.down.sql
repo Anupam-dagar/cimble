@@ -1,0 +1,17 @@
+ALTER TABLE user_privileges
+DROP COLUMN privelege;
+
+ALTER TABLE user_privileges
+ADD is_read TINYINT(1) NOT NULL DEFAULT 1,
+ADD is_write TINYINT(1) NOT NULL DEFAULT 0,
+ADD is_update TINYINT(1) NOT NULL DEFAULT 0,
+ADD is_delete TINYINT(1) NOT NULL DEFAULT 0;
+
+ALTER TABLE user_privileges_archives
+DROP COLUMN privelege;
+
+ALTER TABLE user_privileges_archives
+ADD is_read TINYINT(1) NOT NULL DEFAULT 1,
+ADD is_write TINYINT(1) NOT NULL DEFAULT 0,
+ADD is_update TINYINT(1) NOT NULL DEFAULT 0,
+ADD is_delete TINYINT(1) NOT NULL DEFAULT 0;
