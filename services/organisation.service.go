@@ -1,6 +1,7 @@
 package services
 
 import (
+	"cimble/constants"
 	"cimble/models"
 	"cimble/repositories"
 	"fmt"
@@ -36,8 +37,17 @@ func (os *OrganisationService) CreateOrganisation(
 			UpdatedBy: createdBy,
 		},
 	}
-
-	err = os.OrganisationRepository.CreateOrganisation(organisation, userOrganisationMapping)
+	userPrivilege := models.UserPrivilege{
+		UserId:    createdBy,
+		LevelFor:  string(constants.ORGANISATION),
+		LevelId:   organisation.ID,
+		Privelege: string(constants.OWNER),
+		BaseEntity: models.BaseEntity{
+			CreatedBy: createdBy,
+			UpdatedBy: createdBy,
+		},
+	}
+	err = os.OrganisationRepository.CreateOrganisation(&organisation, &userOrganisationMapping, &userPrivilege)
 	if err != nil {
 		fmt.Printf("error creating organisation: %v", err)
 		return organisation, err

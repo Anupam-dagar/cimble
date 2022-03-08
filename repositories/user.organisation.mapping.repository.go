@@ -8,7 +8,7 @@ import (
 )
 
 type UserOrganisationMappingRepositoryInterface interface {
-	CreateUserOrganisationMapping(models.UserOrganisationMapping, *gorm.DB) error
+	CreateUserOrganisationMapping(*models.UserOrganisationMapping, *gorm.DB) error
 }
 
 type UserOrganisationMappingRepository struct {
@@ -22,14 +22,14 @@ func NewUserOrganisationMappingRepository() UserOrganisationMappingRepositoryInt
 }
 
 func (uomr *UserOrganisationMappingRepository) CreateUserOrganisationMapping(
-	userOrganisationMapping models.UserOrganisationMapping,
+	userOrganisationMapping *models.UserOrganisationMapping,
 	tx *gorm.DB,
 ) (err error) {
 	if tx == nil {
 		tx = uomr.db
 	}
 
-	err = tx.Create(&userOrganisationMapping).Error
+	err = tx.Create(userOrganisationMapping).Error
 
 	return err
 }
