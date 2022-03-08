@@ -8,27 +8,26 @@ import (
 )
 
 type OrganisationRepositoryInterface interface {
-	CreateOrganisation(*models.Organisation, *models.UserOrganisationMapping, *models.UserPrivilege) error
+	CreateOrganisation(*models.Organisation, *models.UserMapping) error
 }
 
 type OrganisationRepository struct {
 	db                                *gorm.DB
 	UserOrganisationMappingRepository UserOrganisationMappingRepositoryInterface
-	UserPrivilegeRepository           UserPrivilegeRepositoryInterface
+	UserMappingRepository             UserMappingRepositoryInterface
 }
 
 func NewOrganisationRepository() OrganisationRepositoryInterface {
 	or := new(OrganisationRepository)
 	or.db = utilities.GetDatabase()
 	or.UserOrganisationMappingRepository = NewUserOrganisationMappingRepository()
-	or.UserPrivilegeRepository = NewUserPrivilegeRepository()
+	or.UserMappingRepository = NewUserMappingRepository()
 	return or
 }
 
 func (or *OrganisationRepository) CreateOrganisation(
 	organisation *models.Organisation,
-	userOrganisationMapping *models.UserOrganisationMapping,
-	userPrivilege *models.UserPrivilege,
+	userMapping *models.UserMapping,
 ) (err error) {
 	db := or.db
 
@@ -37,11 +36,7 @@ func (or *OrganisationRepository) CreateOrganisation(
 			return err
 		}
 
-		if or.UserOrganisationMappingRepository.CreateUserOrganisationMapping(userOrganisationMapping, tx); err != nil {
-			return err
-		}
-
-		if or.UserPrivilegeRepository.CreateUserPrivilege(userPrivilege, tx); err != nil {
+		if or.UserMappingRepository.CreateUserMapping(userMapping, tx); err != nil {
 			return err
 		}
 

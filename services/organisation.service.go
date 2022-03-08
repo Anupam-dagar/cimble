@@ -5,8 +5,6 @@ import (
 	"cimble/models"
 	"cimble/repositories"
 	"fmt"
-
-	"github.com/segmentio/ksuid"
 )
 
 type OrganisationServiceInterface interface {
@@ -28,16 +26,7 @@ func (os *OrganisationService) CreateOrganisation(
 	createdBy string,
 ) (organisation models.Organisation, err error) {
 	organisation = organisationPayload.CreateOrganisationEntity(createdBy)
-	userOrganisationMapping := models.UserOrganisationMapping{
-		ID:             ksuid.New().String(),
-		UserId:         createdBy,
-		OrganisationId: organisation.ID,
-		BaseEntity: models.BaseEntity{
-			CreatedBy: createdBy,
-			UpdatedBy: createdBy,
-		},
-	}
-	userPrivilege := models.UserPrivilege{
+	userMapping := models.UserMapping{
 		UserId:    createdBy,
 		LevelFor:  string(constants.ORGANISATION),
 		LevelId:   organisation.ID,
@@ -47,7 +36,7 @@ func (os *OrganisationService) CreateOrganisation(
 			UpdatedBy: createdBy,
 		},
 	}
-	err = os.OrganisationRepository.CreateOrganisation(&organisation, &userOrganisationMapping, &userPrivilege)
+	err = os.OrganisationRepository.CreateOrganisation(&organisation, &userMapping)
 	if err != nil {
 		fmt.Printf("error creating organisation: %v", err)
 		return organisation, err
