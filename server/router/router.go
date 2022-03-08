@@ -15,6 +15,7 @@ func SetupRoutes() Router {
 
 	router.AuthRoute(apiRouter)
 	router.OrganisationRoute(apiRouter)
+	router.ProjectRoute(apiRouter)
 
 	return router
 }

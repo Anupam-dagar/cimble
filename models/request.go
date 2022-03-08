@@ -22,7 +22,7 @@ type ProjectCreateRequest struct {
 
 func (pcr ProjectCreateRequest) CreateProjectEntity(createdBy string) Project {
 	return Project{
-		Id:             ksuid.New().String(),
+		ID:             ksuid.New().String(),
 		OrganisationId: pcr.OrganisationId,
 		Name:           pcr.Name,
 		BaseEntity: BaseEntity{
