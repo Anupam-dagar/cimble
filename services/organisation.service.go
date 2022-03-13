@@ -9,15 +9,18 @@ import (
 
 type OrganisationServiceInterface interface {
 	CreateOrganisation(models.OrganisationCreateRequest, string) (models.Organisation, error)
+	UpdateOrganisation(models.OrganisationUpdateRequest, string, string) (models.Organisation, error)
 }
 
 type OrganisationService struct {
 	OrganisationRepository repositories.OrganisationRepositoryInterface
+	UserMappingRepository  repositories.UserMappingRepositoryInterface
 }
 
 func NewOrganisationService() OrganisationServiceInterface {
 	os := new(OrganisationService)
 	os.OrganisationRepository = repositories.NewOrganisationRepository()
+	os.UserMappingRepository = repositories.NewUserMappingRepository()
 	return os
 }
 
@@ -39,6 +42,31 @@ func (os *OrganisationService) CreateOrganisation(
 	err = os.OrganisationRepository.CreateOrganisation(&organisation, &userMapping)
 	if err != nil {
 		fmt.Printf("error creating organisation: %v", err)
+		return organisation, err
+	}
+
+	return organisation, err
+}
+
+func (os *OrganisationService) UpdateOrganisation(
+	organisationPayload models.OrganisationUpdateRequest,
+	organisationId,
+	updatedBy string,
+) (organisation models.Organisation, err error) {
+	organisation = organisationPayload.CreateUpdateOrgnisationEntity(updatedBy)
+	userOrganisationPrivilege, err := os.UserMappingRepository.GetUserOrganisationMapping(updatedBy, organisationId)
+
+	if err != nil {
+		return organisation, err
+	}
+
+	if !userOrganisationPrivilege.IsUpdate {
+		return organisation, fmt.Errorf(string(constants.Unauthorised))
+	}
+
+	err = os.OrganisationRepository.UpdateOrganisationById(&organisation, organisationId)
+	if err != nil {
+		fmt.Printf("error updating organisation %s by %s: %v", organisationId, updatedBy, err)
 		return organisation, err
 	}
 

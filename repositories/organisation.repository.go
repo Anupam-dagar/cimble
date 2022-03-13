@@ -9,6 +9,7 @@ import (
 
 type OrganisationRepositoryInterface interface {
 	CreateOrganisation(*models.Organisation, *models.UserMapping) error
+	UpdateOrganisationById(*models.Organisation, string) error
 }
 
 type OrganisationRepository struct {
@@ -42,6 +43,14 @@ func (or *OrganisationRepository) CreateOrganisation(
 
 		return nil
 	})
+
+	return err
+}
+
+func (or *OrganisationRepository) UpdateOrganisationById(organisation *models.Organisation, organisationId string) (err error) {
+	db := or.db
+
+	err = db.Where("id = ?", organisationId).Updates(organisation).Error
 
 	return err
 }

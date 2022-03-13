@@ -29,13 +29,13 @@ func (pc *ProjectController) CreateProject(ctx *gin.Context) {
 
 	err := ctx.ShouldBindJSON(&createProjectPayload)
 	if err != nil {
-		utilities.ResponseWithError(ctx, http.StatusBadRequest, err)
+		utilities.ResponseWithErrorCode(ctx, http.StatusBadRequest, err)
 		return
 	}
 
 	project, err := pc.ProjectService.CreateProject(createProjectPayload, userId)
 	if err != nil {
-		utilities.ResponseWithError(ctx, http.StatusInternalServerError, err)
+		utilities.ResponseWithErrorCode(ctx, http.StatusInternalServerError, err)
 		return
 	}
 

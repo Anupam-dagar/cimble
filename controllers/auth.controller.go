@@ -32,14 +32,14 @@ func (ac *AuthController) Login(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&loginPayload)
 	if err != nil {
 		fmt.Printf("Error binding json: %v\n", err)
-		utilities.ResponseWithError(ctx, http.StatusBadRequest, err)
+		utilities.ResponseWithErrorCode(ctx, http.StatusBadRequest, err)
 		return
 	}
 
 	loginResponse, err := ac.AuthService.Login(loginPayload)
 	if err != nil {
 		fmt.Printf("Error login user: %v\n", err)
-		utilities.ResponseWithError(ctx, http.StatusInternalServerError, err)
+		utilities.ResponseWithErrorCode(ctx, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -52,14 +52,14 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 
 	if err != nil {
 		fmt.Printf("Error binding json: %v\n", err)
-		utilities.ResponseWithError(ctx, http.StatusBadRequest, err)
+		utilities.ResponseWithErrorCode(ctx, http.StatusBadRequest, err)
 		return
 	}
 
 	err = ac.AuthService.SignUp(signUpPayload)
 	if err != nil {
 		fmt.Printf("Error signing up user: %v\n", err)
-		utilities.ResponseWithError(ctx, http.StatusInternalServerError, err)
+		utilities.ResponseWithErrorCode(ctx, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -70,14 +70,14 @@ func (ac *AuthController) RefreshToken(ctx *gin.Context) {
 	userId, ok := ctx.Get("id")
 	if !ok {
 		err := fmt.Errorf("invalid user id")
-		utilities.ResponseWithError(ctx, http.StatusBadRequest, err)
+		utilities.ResponseWithErrorCode(ctx, http.StatusBadRequest, err)
 		return
 	}
 
 	refreshTokenResponse, err := ac.AuthService.RefreshToken(fmt.Sprintf("%v", userId))
 	if err != nil {
 		fmt.Printf("Error generating token pair: %v\n", err)
-		utilities.ResponseWithError(ctx, http.StatusInternalServerError, err)
+		utilities.ResponseWithErrorCode(ctx, http.StatusInternalServerError, err)
 		return
 	}
 

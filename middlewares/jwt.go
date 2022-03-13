@@ -16,7 +16,7 @@ func AuthoriseJwt() gin.HandlerFunc {
 		err := fmt.Errorf("unauthorised access")
 		if authHeader == "" {
 			fmt.Println("No jwt token")
-			utilities.ResponseWithError(ctx, http.StatusUnauthorized, err)
+			utilities.ResponseWithErrorCode(ctx, http.StatusForbidden, err)
 			return
 		}
 
@@ -31,6 +31,6 @@ func AuthoriseJwt() gin.HandlerFunc {
 		}
 
 		fmt.Printf("Invalid jwt token: %v\n", err)
-		utilities.ResponseWithError(ctx, http.StatusUnauthorized, err)
+		utilities.ResponseWithErrorCode(ctx, http.StatusForbidden, err)
 	}
 }

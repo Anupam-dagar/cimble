@@ -31,3 +31,14 @@ func (pcr ProjectCreateRequest) CreateProjectEntity(createdBy string) Project {
 		},
 	}
 }
+
+type OrganisationUpdateRequest struct {
+	Name string `json:"name" binding:"required"`
+}
+
+func (our OrganisationUpdateRequest) CreateUpdateOrgnisationEntity(updatedBy string) Organisation {
+	return Organisation{
+		Name:      our.Name,
+		UpdatedBy: updatedBy,
+	}
+}
