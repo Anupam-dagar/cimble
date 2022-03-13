@@ -13,5 +13,6 @@ func (engine Router) ProjectRoute(routeGroup *gin.RouterGroup) {
 		pc := controllers.NewProjectController()
 
 		projectRoute.POST("/", pc.CreateProject)
+		projectRoute.PUT("/:id", pc.UpdateProject)
 	}
 }

@@ -62,7 +62,7 @@ func (oc *OrganisationController) UpdateOrganisation(ctx *gin.Context) {
 		return
 	}
 
-	utilities.ResponseWithSuccess(ctx, http.StatusOK, organisation)
+	utilities.ResponseWithSuccess(ctx, http.StatusAccepted, organisation)
 }
 
 func (oc *OrganisationController) GetOrganisations(ctx *gin.Context) {

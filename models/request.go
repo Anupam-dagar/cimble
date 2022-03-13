@@ -42,3 +42,16 @@ func (our OrganisationUpdateRequest) CreateUpdateOrgnisationEntity(updatedBy str
 		UpdatedBy: updatedBy,
 	}
 }
+
+type ProjectUpdateRequest struct {
+	Name string `json:"name" binding:"required"`
+}
+
+func (pur ProjectUpdateRequest) CreateUpdateProjectEntity(updatedBy string) Project {
+	return Project{
+		Name: pur.Name,
+		BaseEntity: BaseEntity{
+			UpdatedBy: updatedBy,
+		},
+	}
+}

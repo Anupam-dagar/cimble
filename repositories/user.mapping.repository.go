@@ -10,7 +10,7 @@ import (
 
 type UserMappingRepositoryInterface interface {
 	CreateUserMapping(*models.UserMapping, *gorm.DB) error
-	GetUserOrganisationMapping(string, string) (models.PrivilegeModel, error)
+	GetUserLevelMapping(string, string, constants.PrivilegeLevel) (models.PrivilegeModel, error)
 }
 
 type UserMappingRepository struct {
@@ -33,9 +33,10 @@ func (upr *UserMappingRepository) CreateUserMapping(userMapping *models.UserMapp
 	return err
 }
 
-func (upr *UserMappingRepository) GetUserOrganisationMapping(
+func (upr *UserMappingRepository) GetUserLevelMapping(
 	userId string,
-	organisationId string,
+	levelId string,
+	levelFor constants.PrivilegeLevel,
 ) (privilegeModel models.PrivilegeModel, err error) {
 	db := upr.db
 	var privilege models.Privilege
@@ -44,8 +45,8 @@ func (upr *UserMappingRepository) GetUserOrganisationMapping(
 	db.Select("privileges.*")
 	db.Joins("inner join privileges on privileges.name = user_mappings.privelege")
 	db.Where("user_mappings.user_id = ?", userId)
-	db.Where("user_mappings.level_for = ?", constants.ORGANISATION)
-	db.Where("user_mappings.level_id = ?", organisationId)
+	db.Where("user_mappings.level_for = ?", levelFor)
+	db.Where("user_mappings.level_id = ?", levelId)
 
 	err = db.Find(&privilege).Error
 	privilegeModel = privilege.ToPrivilegeModel()

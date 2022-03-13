@@ -55,7 +55,7 @@ func (os *OrganisationService) UpdateOrganisation(
 	updatedBy string,
 ) (organisation models.Organisation, err error) {
 	organisation = organisationPayload.CreateUpdateOrgnisationEntity(updatedBy)
-	userOrganisationPrivilege, err := os.UserMappingRepository.GetUserOrganisationMapping(updatedBy, organisationId)
+	userOrganisationPrivilege, err := os.UserMappingRepository.GetUserLevelMapping(updatedBy, organisationId, constants.ORGANISATION)
 
 	if err != nil {
 		return organisation, err

@@ -11,6 +11,7 @@ import (
 
 type ProjectControllerInterface interface {
 	CreateProject(ctx *gin.Context)
+	UpdateProject(ctx *gin.Context)
 }
 
 type ProjectController struct {
@@ -40,4 +41,23 @@ func (pc *ProjectController) CreateProject(ctx *gin.Context) {
 	}
 
 	utilities.ResponseWithSuccess(ctx, http.StatusCreated, project)
+}
+
+func (pc *ProjectController) UpdateProject(ctx *gin.Context) {
+	var updateProjectPayload models.ProjectUpdateRequest
+	userId := ctx.GetString("id")
+	projectId := ctx.Param("id")
+
+	err := utilities.GetRequestBody(ctx, &updateProjectPayload)
+	if err != nil {
+		return
+	}
+
+	project, err := pc.ProjectService.UpdateProject(updateProjectPayload, projectId, userId)
+	if err != nil {
+		utilities.ResponseWithError(ctx, err)
+		return
+	}
+
+	utilities.ResponseWithSuccess(ctx, http.StatusAccepted, project)
 }

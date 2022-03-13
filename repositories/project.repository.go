@@ -9,6 +9,7 @@ import (
 
 type ProjectRepositoryInterface interface {
 	CreateProject(*models.Project, *models.UserMapping) error
+	UpdateProjectById(*models.Project, string) error
 }
 
 type ProjectRepository struct {
@@ -40,6 +41,14 @@ func (pr *ProjectRepository) CreateProject(
 
 		return nil
 	})
+
+	return err
+}
+
+func (pr *ProjectRepository) UpdateProjectById(project *models.Project, projectId string) (err error) {
+	db := pr.db
+
+	err = db.Where("id = ?", projectId).Updates(project).Error
 
 	return err
 }
