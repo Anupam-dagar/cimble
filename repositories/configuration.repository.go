@@ -10,6 +10,7 @@ import (
 type ConfigurationRepositoryInterface interface {
 	CreateConfiguration(*models.Configuration) error
 	UpdateConfigurationById(*models.Configuration, string) error
+	GetConfigurations(string) ([]models.Configuration, error)
 }
 
 type ConfigurationRepository struct {
@@ -38,4 +39,13 @@ func (cr *ConfigurationRepository) UpdateConfigurationById(configuration *models
 	err = db.Where("id = ?", configurationId).Updates(configuration).Error
 
 	return err
+}
+
+func (cr *ConfigurationRepository) GetConfigurations(projectId string) (configurations []models.Configuration, err error) {
+	db := cr.Db
+
+	db.Where("project_id = ?", projectId)
+	err = db.Find(&configurations).Error
+
+	return configurations, err
 }

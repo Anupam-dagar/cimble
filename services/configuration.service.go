@@ -10,6 +10,7 @@ import (
 type ConfigurationServiceInterface interface {
 	CreateConfiguration(models.ConfigurationCreateRequest, string, string) (models.Configuration, error)
 	UpdateConfiguration(models.ConfigurationUpdateRequest, string, string, string) (models.Configuration, error)
+	GetConfigurations(string, string) ([]models.Configuration, error)
 }
 
 type ConfigurationService struct {
@@ -64,4 +65,23 @@ func (cs *ConfigurationService) UpdateConfiguration(
 	}
 
 	return configuration, err
+}
+
+func (cs *ConfigurationService) GetConfigurations(projectId string, userId string) (configurations []models.Configuration, err error) {
+	userProjectPrivilege, err := cs.UserMappingRepository.GetUserLevelMapping(userId, projectId, constants.PROJECT)
+
+	if err != nil {
+		return configurations, err
+	}
+
+	if !userProjectPrivilege.IsRead {
+		return configurations, fmt.Errorf(string(constants.Unauthorised))
+	}
+
+	configurations, err = cs.ConfigurationRepository.GetConfigurations(projectId)
+	if err != nil {
+		return configurations, err
+	}
+
+	return configurations, err
 }
