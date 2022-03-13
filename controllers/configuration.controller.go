@@ -11,6 +11,7 @@ import (
 
 type ConfigurationControllerInterface interface {
 	CreateConfiguration(*gin.Context)
+	UpdateConfiguration(ctx *gin.Context)
 }
 
 type ConfigurationController struct {
@@ -40,4 +41,24 @@ func (cc *ConfigurationController) CreateConfiguration(ctx *gin.Context) {
 	}
 
 	utilities.ResponseWithSuccess(ctx, http.StatusCreated, configuration)
+}
+
+func (cc *ConfigurationController) UpdateConfiguration(ctx *gin.Context) {
+	var updateConfigurationPayload models.ConfigurationUpdateRequest
+	userId := ctx.GetString("id")
+	projectId := ctx.Param("projectId")
+	configurationId := ctx.Param("id")
+
+	err := utilities.GetRequestBody(ctx, &updateConfigurationPayload)
+	if err != nil {
+		return
+	}
+
+	project, err := cc.ConfigurationService.UpdateConfiguration(updateConfigurationPayload, projectId, configurationId, userId)
+	if err != nil {
+		utilities.ResponseWithError(ctx, err)
+		return
+	}
+
+	utilities.ResponseWithSuccess(ctx, http.StatusAccepted, project)
 }

@@ -73,3 +73,18 @@ func (ccr ConfigurationCreateRequest) CreateConfigurationEntity(createdBy string
 		},
 	}
 }
+
+type ConfigurationUpdateRequest struct {
+	Name string `json:"name" binding:"required"`
+	Info string `json:"info" binding:"required"`
+}
+
+func (cur ConfigurationUpdateRequest) CreateUpdateConfigurationEntity(updatedBy string) Configuration {
+	return Configuration{
+		Name: cur.Name,
+		Info: cur.Info,
+		BaseEntity: BaseEntity{
+			UpdatedBy: updatedBy,
+		},
+	}
+}

@@ -13,5 +13,6 @@ func (engine Router) ConfigurationRoute(routeGroup *gin.RouterGroup) {
 		oc := controllers.NewConfigurationController()
 
 		configurationRoute.POST("/:projectId", oc.CreateConfiguration)
+		configurationRoute.PUT("/:projectId/:id", oc.UpdateConfiguration)
 	}
 }

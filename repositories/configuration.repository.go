@@ -9,6 +9,7 @@ import (
 
 type ConfigurationRepositoryInterface interface {
 	CreateConfiguration(*models.Configuration) error
+	UpdateConfigurationById(*models.Configuration, string) error
 }
 
 type ConfigurationRepository struct {
@@ -27,6 +28,14 @@ func (cr *ConfigurationRepository) CreateConfiguration(
 	db := cr.Db
 
 	err = db.Create(configuration).Error
+
+	return err
+}
+
+func (cr *ConfigurationRepository) UpdateConfigurationById(configuration *models.Configuration, configurationId string) (err error) {
+	db := cr.Db
+
+	err = db.Where("id = ?", configurationId).Updates(configuration).Error
 
 	return err
 }
