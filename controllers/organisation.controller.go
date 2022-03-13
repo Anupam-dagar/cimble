@@ -12,6 +12,7 @@ import (
 type OrganisationControllerInterface interface {
 	CreateOrganisation(*gin.Context)
 	UpdateOrganisation(*gin.Context)
+	GetOrganisations(*gin.Context)
 }
 
 type OrganisationController struct {
@@ -62,4 +63,16 @@ func (oc *OrganisationController) UpdateOrganisation(ctx *gin.Context) {
 	}
 
 	utilities.ResponseWithSuccess(ctx, http.StatusOK, organisation)
+}
+
+func (oc *OrganisationController) GetOrganisations(ctx *gin.Context) {
+	userId := ctx.GetString("id")
+
+	organisations, err := oc.OrganisationService.GetOrganisations(userId)
+	if err != nil {
+		utilities.ResponseWithError(ctx, err)
+		return
+	}
+
+	utilities.ResponseWithSuccess(ctx, http.StatusOK, organisations)
 }

@@ -10,6 +10,7 @@ import (
 type OrganisationServiceInterface interface {
 	CreateOrganisation(models.OrganisationCreateRequest, string) (models.Organisation, error)
 	UpdateOrganisation(models.OrganisationUpdateRequest, string, string) (models.Organisation, error)
+	GetOrganisations(string) ([]models.Organisation, error)
 }
 
 type OrganisationService struct {
@@ -71,4 +72,13 @@ func (os *OrganisationService) UpdateOrganisation(
 	}
 
 	return organisation, err
+}
+
+func (os *OrganisationService) GetOrganisations(userId string) (organisations []models.Organisation, err error) {
+	organisations, err = os.OrganisationRepository.GetOrganisations(userId)
+	if err != nil {
+		return organisations, err
+	}
+
+	return organisations, err
 }

@@ -14,5 +14,6 @@ func (engine Router) OrganisationRoute(routeGroup *gin.RouterGroup) {
 
 		organisationRoute.POST("/", oc.CreateOrganisation)
 		organisationRoute.PUT("/:id", oc.UpdateOrganisation)
+		organisationRoute.GET("/", oc.GetOrganisations)
 	}
 }
