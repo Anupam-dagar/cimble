@@ -55,3 +55,21 @@ func (pur ProjectUpdateRequest) CreateUpdateProjectEntity(updatedBy string) Proj
 		},
 	}
 }
+
+type ConfigurationCreateRequest struct {
+	Name string `json:"name" binding:"required"`
+	Info string `json:"info" binding:"required"`
+}
+
+func (ccr ConfigurationCreateRequest) CreateConfigurationEntity(createdBy string, projectId string) Configuration {
+	return Configuration{
+		ID:        ksuid.New().String(),
+		Name:      ccr.Name,
+		Info:      ccr.Info,
+		ProjectId: projectId,
+		BaseEntity: BaseEntity{
+			CreatedBy: createdBy,
+			UpdatedBy: createdBy,
+		},
+	}
+}
