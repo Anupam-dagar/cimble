@@ -10,6 +10,7 @@ import (
 type ProjectRepositoryInterface interface {
 	CreateProject(*models.Project, *models.UserMapping) error
 	UpdateProjectById(*models.Project, string) error
+	GetProjects(string) ([]models.Project, error)
 }
 
 type ProjectRepository struct {
@@ -51,4 +52,14 @@ func (pr *ProjectRepository) UpdateProjectById(project *models.Project, projectI
 	err = db.Where("id = ?", projectId).Updates(project).Error
 
 	return err
+}
+
+func (pr *ProjectRepository) GetProjects(userId string) (projects []models.Project, err error) {
+	db := pr.db
+
+	db.Select("projects.*")
+	db.Joins("inner join user_mappings on user_mappings.level_id = projects.id and user_mappings.user_id = ?", userId)
+	err = db.Find(&projects).Error
+
+	return projects, err
 }

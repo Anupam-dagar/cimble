@@ -10,6 +10,7 @@ import (
 type ProjectServiceInterface interface {
 	CreateProject(createProjectPayload models.ProjectCreateRequest, createdBy string) (project models.Project, err error)
 	UpdateProject(models.ProjectUpdateRequest, string, string) (models.Project, error)
+	GetProjects(string) ([]models.Project, error)
 }
 
 type ProjectService struct {
@@ -72,4 +73,13 @@ func (ps *ProjectService) UpdateProject(
 	}
 
 	return project, err
+}
+
+func (ps *ProjectService) GetProjects(userId string) (projects []models.Project, err error) {
+	projects, err = ps.ProjectRepository.GetProjects(userId)
+	if err != nil {
+		return projects, err
+	}
+
+	return projects, err
 }
