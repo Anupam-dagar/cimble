@@ -1,6 +1,9 @@
 package router
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+)
 
 type Router struct {
 	Router *gin.Engine
@@ -11,6 +14,7 @@ func SetupRoutes() Router {
 		Router: gin.Default(),
 	}
 
+	router.Router.Use(cors.Default())
 	apiRouter := router.Router.Group("/api")
 
 	router.AuthRoute(apiRouter)
