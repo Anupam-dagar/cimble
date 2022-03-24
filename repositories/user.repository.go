@@ -10,6 +10,7 @@ import (
 type UserRepositoryInterface interface {
 	AddUser(models.User, models.UserPassword) error
 	GetUserById(userId string) (models.User, error)
+	GetUserWithPassword(string) (models.User, error)
 }
 
 type UserRepository struct {
@@ -47,5 +48,17 @@ func (ur *UserRepository) GetUserById(userId string) (user models.User, err erro
 
 	err = db.Find(&user, "id = ?", userId).Error
 
+	return user, err
+}
+
+func (ur *UserRepository) GetUserWithPassword(userEmail string) (models.User, error) {
+	db := ur.db
+
+	var user models.User
+
+	db = db.Table("users")
+	db.Preload("UserPassword")
+	db.Where("users.email = ?", userEmail)
+	err := db.Find(&user).Error
 	return user, err
 }

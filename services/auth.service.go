@@ -35,13 +35,13 @@ func (as *AuthService) Login(loginPayload models.Login) (loginResponse models.Lo
 	passwordBytes := utilities.GenerateSha512Hash(loginPayload.Password)
 	passwordHash := utilities.ByteToString(passwordBytes)
 
-	user, err := as.UserPasswordRepository.GetUserPassword(loginPayload.Email)
+	user, err := as.UserRepository.GetUserWithPassword(loginPayload.Email)
 	if err != nil {
 		fmt.Printf(`Error getting user password: %v`, err)
 		return loginResponse, err
 	}
 
-	savedPasswordHash := utilities.ByteToString(user.PasswordHash)
+	savedPasswordHash := utilities.ByteToString(user.UserPassword.PasswordHash)
 	if passwordHash != savedPasswordHash {
 		return loginResponse, fmt.Errorf("either email or password is wrong")
 	}
