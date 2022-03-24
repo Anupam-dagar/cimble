@@ -3,10 +3,11 @@ package models
 import "time"
 
 type Organisation struct {
-	ID        string    `gorm:"primaryKey;size:255;not null"`
-	Name      string    `gorm:"size:255;not null"`
-	CreatedAt time.Time `gorm:"autoCreateTime"`
-	UpdatedAt time.Time `gorm:"autoUpdateTime"`
-	CreatedBy string    `gorm:"size:255;not null"`
-	UpdatedBy string    `gorm:"size:255;not null"`
+	ID        string     `gorm:"primaryKey;size:255;not null" json:"id"`
+	Name      string     `gorm:"size:255;not null" json:"name"`
+	CreatedAt time.Time  `gorm:"autoCreateTime" json:"createdAt"`
+	UpdatedAt time.Time  `gorm:"autoUpdateTime" json:"updatedAt"`
+	CreatedBy string     `gorm:"size:255;not null" json:"createdBy"`
+	UpdatedBy string     `gorm:"size:255;not null" json:"updatedBy"`
+	Projects  []*Project `gorm:"foreignKey:OrganisationId;references:ID" json:"projects"`
 }

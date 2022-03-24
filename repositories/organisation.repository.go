@@ -59,7 +59,8 @@ func (or *OrganisationRepository) UpdateOrganisationById(organisation *models.Or
 func (or *OrganisationRepository) GetOrganisations(userId string) (organisations []models.Organisation, err error) {
 	db := or.db
 
-	db.Select("organisations.*")
+	db = db.Table("organisations")
+	db.Preload("Projects")
 	db.Joins("inner join user_mappings on user_mappings.level_id = organisations.id and user_mappings.user_id = ?", userId)
 	err = db.Find(&organisations).Error
 
