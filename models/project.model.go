@@ -5,4 +5,5 @@ type ProjectModel struct {
 	OrganisationId      string `json:"organisationId"`
 	Name                string `json:"name"`
 	ConfigurationsCount int    `json:"configurationsCount"`
+	BaseEntity
 }
