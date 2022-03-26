@@ -60,9 +60,9 @@ func (pr *ProjectRepository) GetProjects(userId string) (projects []models.Proje
 	db := pr.db
 
 	db = db.Table("projects")
-	db.Select("projects.*, count(*) as configurations_count")
+	db.Select("projects.*, count(configurations.id) as configurations_count")
 	db.Joins("inner join user_mappings on user_mappings.level_id = projects.id and user_mappings.user_id = ?", userId)
-	db.Joins("inner join configurations on projects.id = configurations.project_id")
+	db.Joins("left join configurations on projects.id = configurations.project_id")
 	db.Group("projects.id")
 	err = db.Find(&projects).Error
 

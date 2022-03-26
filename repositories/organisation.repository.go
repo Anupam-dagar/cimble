@@ -10,7 +10,7 @@ import (
 type OrganisationRepositoryInterface interface {
 	CreateOrganisation(*models.Organisation, *models.UserMapping) error
 	UpdateOrganisationById(*models.Organisation, string) error
-	GetOrganisations(string) ([]models.Organisation, error)
+	GetOrganisations(string) ([]models.OrganisationModel, error)
 }
 
 type OrganisationRepository struct {
@@ -56,12 +56,14 @@ func (or *OrganisationRepository) UpdateOrganisationById(organisation *models.Or
 	return err
 }
 
-func (or *OrganisationRepository) GetOrganisations(userId string) (organisations []models.Organisation, err error) {
+func (or *OrganisationRepository) GetOrganisations(userId string) (organisations []models.OrganisationModel, err error) {
 	db := or.db
 
 	db = db.Table("organisations")
-	db.Preload("Projects")
+	db.Select("organisations.*, count(projects.id) as projects_count")
 	db.Joins("inner join user_mappings on user_mappings.level_id = organisations.id and user_mappings.user_id = ?", userId)
+	db.Joins("left join projects on projects.organisation_id = organisations.id")
+	db.Group("organisations.id")
 	err = db.Find(&organisations).Error
 
 	return organisations, err
