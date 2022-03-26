@@ -1,7 +1,8 @@
 package router
 
 import (
-	"github.com/gin-contrib/cors"
+	"cimble/middlewares"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,7 +15,7 @@ func SetupRoutes() Router {
 		Router: gin.Default(),
 	}
 
-	router.Router.Use(cors.Default())
+	router.Router.Use(middlewares.CORS())
 	apiRouter := router.Router.Group("/api")
 
 	router.AuthRoute(apiRouter)
