@@ -28,6 +28,7 @@ func (upr *UserMappingRepository) CreateUserMapping(userMapping *models.UserMapp
 		tx = upr.db
 	}
 
+	tx = tx.Table("user_mappings")
 	err = tx.Create(userMapping).Error
 
 	return err
