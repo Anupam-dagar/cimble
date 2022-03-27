@@ -28,6 +28,7 @@ func (cr *ConfigurationRepository) CreateConfiguration(
 ) (err error) {
 	db := cr.Db
 
+	db = db.Table("configurations")
 	err = db.Create(configuration).Error
 
 	return err
@@ -36,6 +37,7 @@ func (cr *ConfigurationRepository) CreateConfiguration(
 func (cr *ConfigurationRepository) UpdateConfigurationById(configuration *models.Configuration, configurationId string) (err error) {
 	db := cr.Db
 
+	db = db.Table("configurations")
 	err = db.Where("id = ?", configurationId).Updates(configuration).Error
 
 	return err
@@ -44,6 +46,7 @@ func (cr *ConfigurationRepository) UpdateConfigurationById(configuration *models
 func (cr *ConfigurationRepository) GetConfigurations(projectId string) (configurations []models.Configuration, err error) {
 	db := cr.Db
 
+	db = db.Table("configurations")
 	db.Where("project_id = ?", projectId)
 	err = db.Find(&configurations).Error
 
