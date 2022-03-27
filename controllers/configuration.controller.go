@@ -13,6 +13,7 @@ type ConfigurationControllerInterface interface {
 	CreateConfiguration(*gin.Context)
 	UpdateConfiguration(ctx *gin.Context)
 	GetConfigurations(ctx *gin.Context)
+	GetFormattedConfigurations(ctx *gin.Context)
 }
 
 type ConfigurationController struct {
@@ -69,6 +70,19 @@ func (cc *ConfigurationController) GetConfigurations(ctx *gin.Context) {
 	projectId := ctx.Param("projectId")
 
 	configurations, err := cc.ConfigurationService.GetConfigurations(projectId, userId)
+	if err != nil {
+		utilities.ResponseWithError(ctx, err)
+		return
+	}
+
+	utilities.ResponseWithSuccess(ctx, http.StatusOK, configurations)
+}
+
+func (cc *ConfigurationController) GetFormattedConfigurations(ctx *gin.Context) {
+	userId := ctx.GetString("id")
+	projectId := ctx.Param("projectId")
+
+	configurations, err := cc.ConfigurationService.GetFormattedConfigurations(projectId, userId)
 	if err != nil {
 		utilities.ResponseWithError(ctx, err)
 		return

@@ -4,6 +4,7 @@ import (
 	"cimble/constants"
 	"cimble/models"
 	"cimble/repositories"
+	"cimble/utilities"
 	"fmt"
 )
 
@@ -11,6 +12,7 @@ type ConfigurationServiceInterface interface {
 	CreateConfiguration(models.ConfigurationCreateRequest, string, string) (models.Configuration, error)
 	UpdateConfiguration(models.ConfigurationUpdateRequest, string, string, string) (models.Configuration, error)
 	GetConfigurations(string, string) ([]models.Configuration, error)
+	GetFormattedConfigurations(string, string) (map[string]models.Configuration, error)
 }
 
 type ConfigurationService struct {
@@ -83,5 +85,19 @@ func (cs *ConfigurationService) GetConfigurations(projectId string, userId strin
 		return configurations, err
 	}
 
+	return configurations, err
+}
+
+func (cs *ConfigurationService) GetFormattedConfigurations(
+	projectId string,
+	userId string,
+) (configurations map[string]models.Configuration, err error) {
+	configurationsData, err := cs.GetConfigurations(projectId, userId)
+	if err != nil {
+		fmt.Printf("error getting configurations data: %s", err.Error())
+		return configurations, err
+	}
+
+	configurations = utilities.FormatConfigurations(configurationsData)
 	return configurations, err
 }
