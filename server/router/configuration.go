@@ -16,5 +16,6 @@ func (engine Router) ConfigurationRoute(routeGroup *gin.RouterGroup) {
 		configurationRoute.PUT("/:projectId/:id", oc.UpdateConfiguration)
 		configurationRoute.GET("/:projectId", oc.GetConfigurations)
 		configurationRoute.GET("/:projectId/json", oc.GetFormattedConfigurations)
+		configurationRoute.DELETE("/:projectId/:id", oc.DeleteConfiguration)
 	}
 }

@@ -3,6 +3,7 @@ package repositories
 import (
 	"cimble/models"
 	"cimble/utilities"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -11,6 +12,7 @@ type ConfigurationRepositoryInterface interface {
 	CreateConfiguration(*models.Configuration) error
 	UpdateConfigurationById(*models.Configuration, string) error
 	GetConfigurations(string) ([]models.Configuration, error)
+	DeleteConfigurationById(string, string) error
 }
 
 type ConfigurationRepository struct {
@@ -51,4 +53,31 @@ func (cr *ConfigurationRepository) GetConfigurations(projectId string) (configur
 	err = db.Find(&configurations).Error
 
 	return configurations, err
+}
+
+func (cr *ConfigurationRepository) DeleteConfigurationById(configurationId string, deletedBy string) (err error) {
+	db := cr.Db
+
+	var configuration models.Configuration
+	db = db.Table("configurations")
+	err = db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("id = ?", configurationId).Find(&configuration).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Delete(&configuration).Error; err != nil {
+			return err
+		}
+
+		configurationArchive := configuration.CreateConfigurationArchiveEntity(deletedBy)
+		fmt.Printf("%+v\n\n", configuration)
+		fmt.Printf("%+v\n\n", configurationArchive)
+		if err := tx.Table("configuration_archives").Create(&configurationArchive).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return err
 }

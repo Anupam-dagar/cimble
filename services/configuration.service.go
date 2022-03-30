@@ -13,6 +13,7 @@ type ConfigurationServiceInterface interface {
 	UpdateConfiguration(models.ConfigurationUpdateRequest, string, string, string) (models.Configuration, error)
 	GetConfigurations(string, string) ([]models.Configuration, error)
 	GetFormattedConfigurations(string, string) (map[string]models.Configuration, error)
+	DeleteConfiguration(string, string, string) error
 }
 
 type ConfigurationService struct {
@@ -100,4 +101,28 @@ func (cs *ConfigurationService) GetFormattedConfigurations(
 
 	configurations = utilities.FormatConfigurations(configurationsData)
 	return configurations, err
+}
+
+func (cs *ConfigurationService) DeleteConfiguration(
+	projectId string,
+	configurationId string,
+	deletedBy string,
+) (err error) {
+	userProjectPrivilege, err := cs.UserMappingRepository.GetUserLevelMapping(deletedBy, projectId, constants.PROJECT)
+
+	if err != nil {
+		return err
+	}
+
+	if !userProjectPrivilege.IsDelete {
+		return fmt.Errorf(string(constants.Unauthorised))
+	}
+
+	err = cs.ConfigurationRepository.DeleteConfigurationById(configurationId, deletedBy)
+	if err != nil {
+		fmt.Printf("error deleting configuration %s by %s: %v", configurationId, deletedBy, err)
+		return err
+	}
+
+	return err
 }

@@ -7,3 +7,10 @@ type Configuration struct {
 	ProjectId string `gorm:"size:255;not null" json:"projectId,omitempty"`
 	BaseEntity
 }
+
+func (c Configuration) CreateConfigurationArchiveEntity(deletedBy string) ConfigurationArchive {
+	return ConfigurationArchive{
+		Configuration: c,
+		DeletedBy:     deletedBy,
+	}
+}

@@ -14,6 +14,7 @@ type ConfigurationControllerInterface interface {
 	UpdateConfiguration(ctx *gin.Context)
 	GetConfigurations(ctx *gin.Context)
 	GetFormattedConfigurations(ctx *gin.Context)
+	DeleteConfiguration(ctx *gin.Context)
 }
 
 type ConfigurationController struct {
@@ -89,4 +90,18 @@ func (cc *ConfigurationController) GetFormattedConfigurations(ctx *gin.Context) 
 	}
 
 	utilities.ResponseWithSuccess(ctx, http.StatusOK, configurations)
+}
+
+func (cc *ConfigurationController) DeleteConfiguration(ctx *gin.Context) {
+	userId := ctx.GetString("id")
+	projectId := ctx.Param("projectId")
+	configurationId := ctx.Param("id")
+
+	err := cc.ConfigurationService.DeleteConfiguration(projectId, configurationId, userId)
+	if err != nil {
+		utilities.ResponseWithError(ctx, err)
+		return
+	}
+
+	utilities.ResponseWithSuccess(ctx, http.StatusAccepted, "")
 }
