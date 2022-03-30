@@ -8,3 +8,8 @@ type BaseEntity struct {
 	CreatedBy string     `gorm:"size:255;not null" json:"createdBy,omitempty"`
 	UpdatedBy string     `gorm:"size:255;not null" json:"updatedBy,omitempty"`
 }
+
+type DeletedBaseEntity struct {
+	DeletedTimestamp *time.Time `gorm:"autoCreateTime" json:"deletedAt,omitempty"`
+	DeletedBy        string     `gorm:"size:255;not null" json:"deletedBy,omitempty"`
+}

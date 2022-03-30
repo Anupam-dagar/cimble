@@ -11,17 +11,20 @@ type ProjectRepositoryInterface interface {
 	CreateProject(*models.Project, *models.UserMapping) error
 	UpdateProjectById(*models.Project, string) error
 	GetProjects(string) ([]models.ProjectModel, error)
+	DeleteProjectById(string, string) error
 }
 
 type ProjectRepository struct {
-	db                    *gorm.DB
-	UserMappingRepository UserMappingRepositoryInterface
+	db                      *gorm.DB
+	UserMappingRepository   UserMappingRepositoryInterface
+	ConfigurationRepository ConfigurationRepositoryInterface
 }
 
 func NewProjectRepository() ProjectRepositoryInterface {
 	pr := new(ProjectRepository)
 	pr.db = utilities.GetDatabase()
 	pr.UserMappingRepository = NewUserMappingRepository()
+	pr.ConfigurationRepository = NewConfigurationRepository()
 	return pr
 }
 
@@ -67,4 +70,33 @@ func (pr *ProjectRepository) GetProjects(userId string) (projects []models.Proje
 	err = db.Find(&projects).Error
 
 	return projects, err
+}
+
+func (pr *ProjectRepository) DeleteProjectById(projectId string, deletedBy string) (err error) {
+	db := pr.db
+	db = db.Table("projects")
+
+	var project models.Project
+	err = db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("id = ?", projectId).Find(&project).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Delete(&project).Error; err != nil {
+			return err
+		}
+
+		projectArchive := project.CreateProjectArchiveEntity(deletedBy)
+		if err := tx.Table("project_archives").Create(&projectArchive).Error; err != nil {
+			return err
+		}
+
+		if err := pr.ConfigurationRepository.DeleteConfigurationByProjectId(tx, projectId, deletedBy); err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return err
 }

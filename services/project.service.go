@@ -11,6 +11,7 @@ type ProjectServiceInterface interface {
 	CreateProject(createProjectPayload models.ProjectCreateRequest, createdBy string) (project models.Project, err error)
 	UpdateProject(models.ProjectUpdateRequest, string, string) (models.Project, error)
 	GetProjects(string) ([]models.ProjectModel, error)
+	DeleteProject(string, string) error
 }
 
 type ProjectService struct {
@@ -82,4 +83,27 @@ func (ps *ProjectService) GetProjects(userId string) (projects []models.ProjectM
 	}
 
 	return projects, err
+}
+
+func (ps *ProjectService) DeleteProject(
+	projectId,
+	deletedBy string,
+) (err error) {
+	userProjectPrivilege, err := ps.UserMappingRepository.GetUserLevelMapping(deletedBy, projectId, constants.PROJECT)
+
+	if err != nil {
+		return err
+	}
+
+	if !userProjectPrivilege.IsDelete {
+		return fmt.Errorf(string(constants.Unauthorised))
+	}
+
+	err = ps.ProjectRepository.DeleteProjectById(projectId, deletedBy)
+	if err != nil {
+		fmt.Printf("error deleting project %s by %s: %v", projectId, deletedBy, err)
+		return err
+	}
+
+	return err
 }

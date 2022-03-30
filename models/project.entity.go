@@ -8,3 +8,12 @@ type Project struct {
 	Configuration  []*Configuration `gorm:"foreignKey:ProjectId;references:ID" json:"configurations"`
 	BaseEntity
 }
+
+func (p Project) CreateProjectArchiveEntity(deletedBy string) ProjectArchive {
+	return ProjectArchive{
+		Project: p,
+		DeletedBaseEntity: DeletedBaseEntity{
+			DeletedBy: deletedBy,
+		},
+	}
+}

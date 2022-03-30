@@ -15,5 +15,6 @@ func (engine Router) ProjectRoute(routeGroup *gin.RouterGroup) {
 		projectRoute.POST("/", pc.CreateProject)
 		projectRoute.PUT("/:id", pc.UpdateProject)
 		projectRoute.GET("/", pc.GetProjects)
+		projectRoute.DELETE("/:id", pc.DeleteProject)
 	}
 }

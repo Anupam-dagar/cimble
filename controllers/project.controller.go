@@ -13,6 +13,7 @@ type ProjectControllerInterface interface {
 	CreateProject(ctx *gin.Context)
 	UpdateProject(ctx *gin.Context)
 	GetProjects(*gin.Context)
+	DeleteProject(ctx *gin.Context)
 }
 
 type ProjectController struct {
@@ -73,4 +74,17 @@ func (pc *ProjectController) GetProjects(ctx *gin.Context) {
 	}
 
 	utilities.ResponseWithSuccess(ctx, http.StatusOK, projects)
+}
+
+func (pc *ProjectController) DeleteProject(ctx *gin.Context) {
+	userId := ctx.GetString("id")
+	projectId := ctx.Param("id")
+
+	err := pc.ProjectService.DeleteProject(projectId, userId)
+	if err != nil {
+		utilities.ResponseWithError(ctx, err)
+		return
+	}
+
+	utilities.ResponseWithSuccess(ctx, http.StatusAccepted, "")
 }

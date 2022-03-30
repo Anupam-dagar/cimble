@@ -11,6 +11,8 @@ type Configuration struct {
 func (c Configuration) CreateConfigurationArchiveEntity(deletedBy string) ConfigurationArchive {
 	return ConfigurationArchive{
 		Configuration: c,
-		DeletedBy:     deletedBy,
+		DeletedBaseEntity: DeletedBaseEntity{
+			DeletedBy: deletedBy,
+		},
 	}
 }
