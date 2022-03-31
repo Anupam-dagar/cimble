@@ -11,6 +11,7 @@ type OrganisationServiceInterface interface {
 	CreateOrganisation(models.OrganisationCreateRequest, string) (models.Organisation, error)
 	UpdateOrganisation(models.OrganisationUpdateRequest, string, string) (models.Organisation, error)
 	GetOrganisations(string) ([]models.OrganisationModel, error)
+	DeleteOrganisation(string, string) error
 }
 
 type OrganisationService struct {
@@ -81,4 +82,27 @@ func (os *OrganisationService) GetOrganisations(userId string) (organisations []
 	}
 
 	return organisations, err
+}
+
+func (os *OrganisationService) DeleteOrganisation(
+	organisationId string,
+	deletedBy string,
+) (err error) {
+	userOrganisationPrivilege, err := os.UserMappingRepository.GetUserLevelMapping(deletedBy, organisationId, constants.ORGANISATION)
+
+	if err != nil {
+		return err
+	}
+
+	if !userOrganisationPrivilege.IsDelete {
+		return fmt.Errorf(string(constants.Unauthorised))
+	}
+
+	err = os.OrganisationRepository.DeleteOrganisationById(organisationId, deletedBy)
+	if err != nil {
+		fmt.Printf("error deleting organisation %s by %s: %v", organisationId, deletedBy, err)
+		return err
+	}
+
+	return err
 }

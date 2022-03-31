@@ -13,6 +13,7 @@ type OrganisationControllerInterface interface {
 	CreateOrganisation(*gin.Context)
 	UpdateOrganisation(*gin.Context)
 	GetOrganisations(*gin.Context)
+	DeleteOrganisation(*gin.Context)
 }
 
 type OrganisationController struct {
@@ -75,4 +76,17 @@ func (oc *OrganisationController) GetOrganisations(ctx *gin.Context) {
 	}
 
 	utilities.ResponseWithSuccess(ctx, http.StatusOK, organisations)
+}
+
+func (oc *OrganisationController) DeleteOrganisation(ctx *gin.Context) {
+	userId := ctx.GetString("id")
+	organisationId := ctx.Param("id")
+
+	err := oc.OrganisationService.DeleteOrganisation(organisationId, userId)
+	if err != nil {
+		utilities.ResponseWithError(ctx, err)
+		return
+	}
+
+	utilities.ResponseWithSuccess(ctx, http.StatusAccepted, "")
 }

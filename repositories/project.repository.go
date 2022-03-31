@@ -12,6 +12,7 @@ type ProjectRepositoryInterface interface {
 	UpdateProjectById(*models.Project, string) error
 	GetProjects(string) ([]models.ProjectModel, error)
 	DeleteProjectById(string, string) error
+	DeleteProjectByOrganisationId(*gorm.DB, string, string) error
 }
 
 type ProjectRepository struct {
@@ -92,6 +93,43 @@ func (pr *ProjectRepository) DeleteProjectById(projectId string, deletedBy strin
 		}
 
 		if err := pr.ConfigurationRepository.DeleteConfigurationByProjectId(tx, projectId, deletedBy); err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return err
+}
+
+func (pr *ProjectRepository) DeleteProjectByOrganisationId(tx *gorm.DB, organisationId string, deletedBy string) (err error) {
+	if tx == nil {
+		tx = pr.db
+	}
+
+	tx = tx.Table("projects")
+
+	var projects []models.Project
+	err = tx.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("organisation_id = ?", organisationId).Find(&projects).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Delete(&projects).Error; err != nil {
+			return err
+		}
+
+		var projectsArchive []models.ProjectArchive
+		var projectIds []string
+		for _, deletedProject := range projects {
+			projectsArchive = append(projectsArchive, deletedProject.CreateProjectArchiveEntity(deletedBy))
+			projectIds = append(projectIds, deletedProject.ID)
+		}
+		if err := tx.Table("project_archives").Create(&projectsArchive).Error; err != nil {
+			return err
+		}
+
+		if err := pr.ConfigurationRepository.DeleteConfigurationByProjectIds(tx, projectIds, deletedBy); err != nil {
 			return err
 		}
 

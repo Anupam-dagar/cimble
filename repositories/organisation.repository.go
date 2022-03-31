@@ -11,12 +11,14 @@ type OrganisationRepositoryInterface interface {
 	CreateOrganisation(*models.Organisation, *models.UserMapping) error
 	UpdateOrganisationById(*models.Organisation, string) error
 	GetOrganisations(string) ([]models.OrganisationModel, error)
+	DeleteOrganisationById(string, string) error
 }
 
 type OrganisationRepository struct {
 	db                                *gorm.DB
 	UserOrganisationMappingRepository UserOrganisationMappingRepositoryInterface
 	UserMappingRepository             UserMappingRepositoryInterface
+	ProjectRepository                 ProjectRepositoryInterface
 }
 
 func NewOrganisationRepository() OrganisationRepositoryInterface {
@@ -24,6 +26,7 @@ func NewOrganisationRepository() OrganisationRepositoryInterface {
 	or.db = utilities.GetDatabase()
 	or.UserOrganisationMappingRepository = NewUserOrganisationMappingRepository()
 	or.UserMappingRepository = NewUserMappingRepository()
+	or.ProjectRepository = NewProjectRepository()
 	return or
 }
 
@@ -67,4 +70,34 @@ func (or *OrganisationRepository) GetOrganisations(userId string) (organisations
 	err = db.Find(&organisations).Error
 
 	return organisations, err
+}
+
+func (or *OrganisationRepository) DeleteOrganisationById(organisationId string, deletedBy string) (err error) {
+	db := or.db
+	db = db.Table("organisations")
+
+	var organisation models.Organisation
+
+	err = db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("id = ?", organisationId).Find(&organisation).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Delete(&organisation).Error; err != nil {
+			return err
+		}
+
+		if err := or.ProjectRepository.DeleteProjectByOrganisationId(tx, organisationId, deletedBy); err != nil {
+			return err
+		}
+
+		organisationArchive := organisation.CreateOrganisationArchiveEntity(deletedBy)
+		if err := tx.Table("organisation_archives").Create(&organisationArchive).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return err
 }

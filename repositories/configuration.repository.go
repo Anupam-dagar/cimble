@@ -13,6 +13,7 @@ type ConfigurationRepositoryInterface interface {
 	GetConfigurations(string) ([]models.Configuration, error)
 	DeleteConfigurationById(string, string) error
 	DeleteConfigurationByProjectId(*gorm.DB, string, string) error
+	DeleteConfigurationByProjectIds(*gorm.DB, []string, string) error
 }
 
 type ConfigurationRepository struct {
@@ -89,6 +90,36 @@ func (cr *ConfigurationRepository) DeleteConfigurationByProjectId(tx *gorm.DB, p
 	tx = tx.Table("configurations")
 	err = tx.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Where("project_id = ?", projectId).Find(&configuration).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Delete(&configuration).Error; err != nil {
+			return err
+		}
+
+		var configurationArchive []models.ConfigurationArchive
+		for _, deletedConfiguration := range configuration {
+			configurationArchive = append(configurationArchive, deletedConfiguration.CreateConfigurationArchiveEntity(deletedBy))
+		}
+		if err := tx.Table("configuration_archives").Create(&configurationArchive).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return err
+}
+
+func (cr *ConfigurationRepository) DeleteConfigurationByProjectIds(tx *gorm.DB, projectIds []string, deletedBy string) (err error) {
+	if tx == nil {
+		tx = cr.Db
+	}
+
+	var configuration []models.Configuration
+	tx = tx.Table("configurations")
+	err = tx.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("project_id in (?)", projectIds).Find(&configuration).Error; err != nil {
 			return err
 		}
 

@@ -11,3 +11,12 @@ type Organisation struct {
 	UpdatedBy string     `gorm:"size:255;not null" json:"updatedBy"`
 	Projects  []*Project `gorm:"foreignKey:OrganisationId;references:ID" json:"projects"`
 }
+
+func (o Organisation) CreateOrganisationArchiveEntity(deletedBy string) OrganisationArchive {
+	return OrganisationArchive{
+		Organisation: o,
+		DeletedBaseEntity: DeletedBaseEntity{
+			DeletedBy: deletedBy,
+		},
+	}
+}
