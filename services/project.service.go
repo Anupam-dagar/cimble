@@ -10,7 +10,7 @@ import (
 type ProjectServiceInterface interface {
 	CreateProject(createProjectPayload models.ProjectCreateRequest, createdBy string) (project models.Project, err error)
 	UpdateProject(models.ProjectUpdateRequest, string, string) (models.Project, error)
-	GetProjects(string) ([]models.ProjectModel, error)
+	GetProjects(string, string) ([]models.ProjectModel, error)
 	DeleteProject(string, string) error
 }
 
@@ -76,8 +76,8 @@ func (ps *ProjectService) UpdateProject(
 	return project, err
 }
 
-func (ps *ProjectService) GetProjects(userId string) (projects []models.ProjectModel, err error) {
-	projects, err = ps.ProjectRepository.GetProjects(userId)
+func (ps *ProjectService) GetProjects(userId string, organisationId string) (projects []models.ProjectModel, err error) {
+	projects, err = ps.ProjectRepository.GetProjects(userId, organisationId)
 	if err != nil {
 		return projects, err
 	}
