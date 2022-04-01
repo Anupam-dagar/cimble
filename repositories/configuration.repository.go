@@ -93,6 +93,10 @@ func (cr *ConfigurationRepository) DeleteConfigurationByProjectId(tx *gorm.DB, p
 			return err
 		}
 
+		if len(configuration) == 0 {
+			return nil
+		}
+
 		if err := tx.Delete(&configuration).Error; err != nil {
 			return err
 		}
@@ -121,6 +125,10 @@ func (cr *ConfigurationRepository) DeleteConfigurationByProjectIds(tx *gorm.DB, 
 	err = tx.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Where("project_id in (?)", projectIds).Find(&configuration).Error; err != nil {
 			return err
+		}
+
+		if len(configuration) == 0 {
+			return nil
 		}
 
 		if err := tx.Delete(&configuration).Error; err != nil {

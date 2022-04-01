@@ -116,6 +116,10 @@ func (pr *ProjectRepository) DeleteProjectByOrganisationId(tx *gorm.DB, organisa
 			return err
 		}
 
+		if len(projects) == 0 {
+			return nil
+		}
+
 		if err := tx.Delete(&projects).Error; err != nil {
 			return err
 		}

@@ -72,6 +72,8 @@ func (os *OrganisationService) UpdateOrganisation(
 		return organisation, err
 	}
 
+	organisation.ID = organisationId
+
 	return organisation, err
 }
 

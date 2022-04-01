@@ -73,6 +73,8 @@ func (ps *ProjectService) UpdateProject(
 		return project, err
 	}
 
+	project.ID = projectId
+
 	return project, err
 }
 

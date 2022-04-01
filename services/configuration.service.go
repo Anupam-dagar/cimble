@@ -67,6 +67,8 @@ func (cs *ConfigurationService) UpdateConfiguration(
 		return configuration, err
 	}
 
+	configuration.ID = configurationId
+
 	return configuration, err
 }
 
