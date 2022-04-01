@@ -4,13 +4,14 @@ import (
 	"cimble/constants"
 	"cimble/models"
 	"cimble/repositories"
+	"cimble/utilities"
 	"fmt"
 )
 
 type OrganisationServiceInterface interface {
 	CreateOrganisation(models.OrganisationCreateRequest, string) (models.Organisation, error)
 	UpdateOrganisation(models.OrganisationUpdateRequest, string, string) (models.Organisation, error)
-	GetOrganisations(string) ([]models.OrganisationModel, error)
+	GetOrganisations(string, int64, int64) (models.OrganisationsResponse, error)
 	DeleteOrganisation(string, string) error
 }
 
@@ -77,10 +78,20 @@ func (os *OrganisationService) UpdateOrganisation(
 	return organisation, err
 }
 
-func (os *OrganisationService) GetOrganisations(userId string) (organisations []models.OrganisationModel, err error) {
-	organisations, err = os.OrganisationRepository.GetOrganisations(userId)
+func (os *OrganisationService) GetOrganisations(
+	userId string,
+	offset int64,
+	limit int64,
+) (organisations models.OrganisationsResponse, err error) {
+	organisationsData, count, err := os.OrganisationRepository.GetOrganisations(userId, offset, limit)
 	if err != nil {
 		return organisations, err
+	}
+
+	pagination := utilities.GeneratePage(count, offset, limit)
+	organisations = models.OrganisationsResponse{
+		Organisations: organisationsData,
+		Page:          pagination,
 	}
 
 	return organisations, err

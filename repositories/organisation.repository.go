@@ -10,7 +10,7 @@ import (
 type OrganisationRepositoryInterface interface {
 	CreateOrganisation(*models.Organisation, *models.UserMapping) error
 	UpdateOrganisationById(*models.Organisation, string) error
-	GetOrganisations(string) ([]models.OrganisationModel, error)
+	GetOrganisations(string, int64, int64) ([]models.OrganisationModel, int64, error)
 	DeleteOrganisationById(string, string) error
 }
 
@@ -59,7 +59,7 @@ func (or *OrganisationRepository) UpdateOrganisationById(organisation *models.Or
 	return err
 }
 
-func (or *OrganisationRepository) GetOrganisations(userId string) (organisations []models.OrganisationModel, err error) {
+func (or *OrganisationRepository) GetOrganisations(userId string, offset int64, limit int64) (organisations []models.OrganisationModel, count int64, err error) {
 	db := or.db
 
 	db = db.Table("organisations")
@@ -67,9 +67,15 @@ func (or *OrganisationRepository) GetOrganisations(userId string) (organisations
 	db.Joins("inner join user_mappings on user_mappings.level_id = organisations.id and user_mappings.user_id = ?", userId)
 	db.Joins("left join projects on projects.organisation_id = organisations.id")
 	db.Group("organisations.id")
+	db.Offset(int(offset))
+	db.Limit(int(limit))
 	err = db.Find(&organisations).Error
 
-	return organisations, err
+	if err == nil {
+		db.Count(&count)
+	}
+
+	return organisations, count, err
 }
 
 func (or *OrganisationRepository) DeleteOrganisationById(organisationId string, deletedBy string) (err error) {

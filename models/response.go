@@ -25,3 +25,13 @@ func (lr LoginResponse) ConstructLoginResponse(
 		RefreshToken: refreshToken,
 	}
 }
+
+type Pagination struct {
+	CurrentPage int `json:"currentPage"`
+	TotalPages  int `json:"totalPages"`
+}
+
+type OrganisationsResponse struct {
+	Organisations []OrganisationModel `json:"organisations"`
+	Page          Pagination          `json:"page"`
+}

@@ -5,4 +5,5 @@ type OrganisationModel struct {
 	Name          string `json:"name"`
 	CreatedAt     string `json:"createdAt"`
 	ProjectsCount string `json:"projectsCount"`
+	Pagination
 }

@@ -5,6 +5,7 @@ import (
 	"cimble/services"
 	"cimble/utilities"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -68,8 +69,16 @@ func (oc *OrganisationController) UpdateOrganisation(ctx *gin.Context) {
 
 func (oc *OrganisationController) GetOrganisations(ctx *gin.Context) {
 	userId := ctx.GetString("id")
+	offsetQuery := ctx.Query("offset")
+	limitQuery := ctx.Query("limit")
 
-	organisations, err := oc.OrganisationService.GetOrganisations(userId)
+	offset, _ := strconv.ParseInt(offsetQuery, 10, 64)
+	limit, err := strconv.ParseInt(limitQuery, 10, 64)
+	if err != nil {
+		limit = 10
+	}
+
+	organisations, err := oc.OrganisationService.GetOrganisations(userId, offset, limit)
 	if err != nil {
 		utilities.ResponseWithError(ctx, err)
 		return

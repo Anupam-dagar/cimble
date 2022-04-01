@@ -88,3 +88,8 @@ func (cur ConfigurationUpdateRequest) CreateUpdateConfigurationEntity(updatedBy 
 		},
 	}
 }
+
+type PaginationQueryParams struct {
+	Offset *int `json:"offset"`
+	Limit  *int `json:"limit"`
+}

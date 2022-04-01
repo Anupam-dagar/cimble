@@ -2,7 +2,9 @@ package utilities
 
 import (
 	"cimble/constants"
+	"cimble/models"
 	"encoding/hex"
+	"math"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -29,4 +31,13 @@ func GetRequestBody(ctx *gin.Context, bodyModel interface{}) (err error) {
 	}
 
 	return
+}
+
+func GeneratePage(totalCount int64, offset int64, limit int64) models.Pagination {
+	totalPages := int(math.Ceil(float64(totalCount) / float64(limit)))
+	currentPage := int((offset / limit) + 1)
+	return models.Pagination{
+		TotalPages:  totalPages,
+		CurrentPage: currentPage,
+	}
 }
