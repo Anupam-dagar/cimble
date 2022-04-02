@@ -40,3 +40,8 @@ type ProjectsResponse struct {
 	Projects []ProjectModel `json:"projects"`
 	Page     Pagination     `json:"page"`
 }
+
+type ConfigurationsResponse struct {
+	Configurations []Configuration `json:"configurations"`
+	Page           Pagination      `json:"page"`
+}

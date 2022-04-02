@@ -69,8 +69,9 @@ func (cc *ConfigurationController) UpdateConfiguration(ctx *gin.Context) {
 func (cc *ConfigurationController) GetConfigurations(ctx *gin.Context) {
 	userId := ctx.GetString("id")
 	projectId := ctx.Param("projectId")
+	offset, limit := utilities.GetOffsetAndLimit(ctx)
 
-	configurations, err := cc.ConfigurationService.GetConfigurations(projectId, userId)
+	configurations, err := cc.ConfigurationService.GetConfigurations(projectId, userId, offset, limit)
 	if err != nil {
 		utilities.ResponseWithError(ctx, err)
 		return

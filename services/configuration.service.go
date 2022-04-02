@@ -11,7 +11,7 @@ import (
 type ConfigurationServiceInterface interface {
 	CreateConfiguration(models.ConfigurationCreateRequest, string, string) (models.Configuration, error)
 	UpdateConfiguration(models.ConfigurationUpdateRequest, string, string, string) (models.Configuration, error)
-	GetConfigurations(string, string) ([]models.Configuration, error)
+	GetConfigurations(string, string, int64, int64) (models.ConfigurationsResponse, error)
 	GetFormattedConfigurations(string, string) (map[string]models.Configuration, error)
 	DeleteConfiguration(string, string, string) error
 }
@@ -72,7 +72,7 @@ func (cs *ConfigurationService) UpdateConfiguration(
 	return configuration, err
 }
 
-func (cs *ConfigurationService) GetConfigurations(projectId string, userId string) (configurations []models.Configuration, err error) {
+func (cs *ConfigurationService) GetConfigurations(projectId string, userId string, offset int64, limit int64) (configurations models.ConfigurationsResponse, err error) {
 	userProjectPrivilege, err := cs.UserMappingRepository.GetUserLevelMapping(userId, projectId, constants.PROJECT)
 
 	if err != nil {
@@ -83,9 +83,16 @@ func (cs *ConfigurationService) GetConfigurations(projectId string, userId strin
 		return configurations, fmt.Errorf(string(constants.Unauthorised))
 	}
 
-	configurations, err = cs.ConfigurationRepository.GetConfigurations(projectId)
+	configurationsData, count, err := cs.ConfigurationRepository.GetConfigurations(projectId, offset, limit)
 	if err != nil {
 		return configurations, err
+	}
+
+	page := utilities.GeneratePage(count, offset, limit)
+
+	configurations = models.ConfigurationsResponse{
+		Configurations: configurationsData,
+		Page:           page,
 	}
 
 	return configurations, err
@@ -95,9 +102,9 @@ func (cs *ConfigurationService) GetFormattedConfigurations(
 	projectId string,
 	userId string,
 ) (configurations map[string]models.Configuration, err error) {
-	configurationsData, err := cs.GetConfigurations(projectId, userId)
+	configurationsData, err := cs.ConfigurationRepository.GetAllConfigurations(projectId)
 	if err != nil {
-		fmt.Printf("error getting configurations data: %s", err.Error())
+		fmt.Printf("error getting formatted configurations data: %s", err.Error())
 		return configurations, err
 	}
 

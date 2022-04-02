@@ -10,7 +10,8 @@ import (
 type ConfigurationRepositoryInterface interface {
 	CreateConfiguration(*models.Configuration) error
 	UpdateConfigurationById(*models.Configuration, string) error
-	GetConfigurations(string) ([]models.Configuration, error)
+	GetConfigurations(string, int64, int64) ([]models.Configuration, int64, error)
+	GetAllConfigurations(string) ([]models.Configuration, error)
 	DeleteConfigurationById(string, string) error
 	DeleteConfigurationByProjectId(*gorm.DB, string, string) error
 	DeleteConfigurationByProjectIds(*gorm.DB, []string, string) error
@@ -46,7 +47,23 @@ func (cr *ConfigurationRepository) UpdateConfigurationById(configuration *models
 	return err
 }
 
-func (cr *ConfigurationRepository) GetConfigurations(projectId string) (configurations []models.Configuration, err error) {
+func (cr *ConfigurationRepository) GetConfigurations(projectId string, offset int64, limit int64) (configurations []models.Configuration, count int64, err error) {
+	db := cr.Db
+
+	db = db.Table("configurations")
+	db.Where("project_id = ?", projectId)
+	db.Offset(int(offset))
+	db.Limit(int(limit))
+	err = db.Find(&configurations).Error
+
+	if err == nil {
+		db.Count(&count)
+	}
+
+	return configurations, count, err
+}
+
+func (cr *ConfigurationRepository) GetAllConfigurations(projectId string) (configurations []models.Configuration, err error) {
 	db := cr.Db
 
 	db = db.Table("configurations")
