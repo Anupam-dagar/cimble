@@ -13,3 +13,10 @@ const (
 	ORGANISATION PrivilegeLevel = "organisation"
 	PROJECT      PrivilegeLevel = "project"
 )
+
+type SecurityType string
+
+const (
+	PASSWORD SecurityType = "password"
+	ApiKey   SecurityType = "api_key"
+)

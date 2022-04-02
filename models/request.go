@@ -93,3 +93,20 @@ type PaginationQueryParams struct {
 	Offset *int `json:"offset"`
 	Limit  *int `json:"limit"`
 }
+
+type ApiKeyCreateRequest struct {
+	OrganisationId string `json:"organisationId" binding:"required"`
+}
+
+func (akc ApiKeyCreateRequest) CreateApiKeyEntity(createdBy string, keyHash []byte) ApiKey {
+	return ApiKey{
+		ID:             ksuid.New().String(),
+		OrganisationId: akc.OrganisationId,
+		BaseEntity: BaseEntity{
+			CreatedBy: createdBy,
+			UpdatedBy: createdBy,
+		},
+		Privileges: "[\"config.read\"]",
+		KeyHash:    keyHash,
+	}
+}

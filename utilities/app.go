@@ -3,6 +3,7 @@ package utilities
 import (
 	"cimble/constants"
 	"cimble/models"
+	"crypto/rand"
 	"encoding/hex"
 	"math"
 	"net/http"
@@ -10,6 +11,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+const chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func ByteToString(inputBytes []byte) string {
 	return hex.EncodeToString(inputBytes)
@@ -54,4 +57,18 @@ func GetOffsetAndLimit(ctx *gin.Context) (offset int64, limit int64) {
 	}
 
 	return offset, limit
+}
+
+func GenerateApiKey(length int) (string, error) {
+	bytes := make([]byte, length)
+
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+
+	for i, b := range bytes {
+		bytes[i] = chars[b%byte(len(chars))]
+	}
+
+	return string(bytes), nil
 }

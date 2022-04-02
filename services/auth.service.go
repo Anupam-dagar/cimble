@@ -1,6 +1,7 @@
 package services
 
 import (
+	"cimble/constants"
 	"cimble/models"
 	"cimble/repositories"
 	"cimble/utilities"
@@ -32,7 +33,7 @@ func NewAuthService() AuthServiceInterface {
 }
 
 func (as *AuthService) Login(loginPayload models.Login) (loginResponse models.LoginResponse, err error) {
-	passwordBytes := utilities.GenerateSha512Hash(loginPayload.Password)
+	passwordBytes := utilities.GenerateSha512Hash(loginPayload.Password, constants.PASSWORD)
 	passwordHash := utilities.ByteToString(passwordBytes)
 
 	user, err := as.UserRepository.GetUserWithPassword(loginPayload.Email)
@@ -53,7 +54,7 @@ func (as *AuthService) Login(loginPayload models.Login) (loginResponse models.Lo
 
 func (as *AuthService) SignUp(signUpPayload models.SignUp) (err error) {
 	user := signUpPayload.CreateUserEntity("self")
-	passwordHash := utilities.GenerateSha512Hash(signUpPayload.Password)
+	passwordHash := utilities.GenerateSha512Hash(signUpPayload.Password, constants.PASSWORD)
 	userPassword := models.UserPassword{
 		UserId:       user.ID,
 		PasswordHash: passwordHash,
