@@ -4,13 +4,14 @@ import (
 	"cimble/constants"
 	"cimble/models"
 	"cimble/repositories"
+	"cimble/utilities"
 	"fmt"
 )
 
 type ProjectServiceInterface interface {
 	CreateProject(createProjectPayload models.ProjectCreateRequest, createdBy string) (project models.Project, err error)
 	UpdateProject(models.ProjectUpdateRequest, string, string) (models.Project, error)
-	GetProjects(string, string) ([]models.ProjectModel, error)
+	GetProjects(string, string, int64, int64) (models.ProjectsResponse, error)
 	DeleteProject(string, string) error
 }
 
@@ -78,12 +79,18 @@ func (ps *ProjectService) UpdateProject(
 	return project, err
 }
 
-func (ps *ProjectService) GetProjects(userId string, organisationId string) (projects []models.ProjectModel, err error) {
-	projects, err = ps.ProjectRepository.GetProjects(userId, organisationId)
+func (ps *ProjectService) GetProjects(userId string, organisationId string, offset int64, limit int64) (projects models.ProjectsResponse, err error) {
+	projectsData, count, err := ps.ProjectRepository.GetProjects(userId, organisationId, offset, limit)
 	if err != nil {
 		return projects, err
 	}
 
+	page := utilities.GeneratePage(count, offset, limit)
+
+	projects = models.ProjectsResponse{
+		Projects: projectsData,
+		Page:     page,
+	}
 	return projects, err
 }
 

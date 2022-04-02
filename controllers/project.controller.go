@@ -67,8 +67,9 @@ func (pc *ProjectController) UpdateProject(ctx *gin.Context) {
 func (pc *ProjectController) GetProjects(ctx *gin.Context) {
 	userId := ctx.GetString("id")
 	organisationId := ctx.Param("organisationId")
+	offset, limit := utilities.GetOffsetAndLimit(ctx)
 
-	projects, err := pc.ProjectService.GetProjects(userId, organisationId)
+	projects, err := pc.ProjectService.GetProjects(userId, organisationId, offset, limit)
 	if err != nil {
 		utilities.ResponseWithError(ctx, err)
 		return

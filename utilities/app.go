@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"math"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,4 +41,17 @@ func GeneratePage(totalCount int64, offset int64, limit int64) models.Pagination
 		TotalPages:  totalPages,
 		CurrentPage: currentPage,
 	}
+}
+
+func GetOffsetAndLimit(ctx *gin.Context) (offset int64, limit int64) {
+	offsetQuery := ctx.Query("offset")
+	limitQuery := ctx.Query("limit")
+
+	offset, _ = strconv.ParseInt(offsetQuery, 10, 64)
+	limit, err := strconv.ParseInt(limitQuery, 10, 64)
+	if err != nil {
+		limit = 10
+	}
+
+	return offset, limit
 }

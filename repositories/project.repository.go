@@ -10,7 +10,7 @@ import (
 type ProjectRepositoryInterface interface {
 	CreateProject(*models.Project, *models.UserMapping) error
 	UpdateProjectById(*models.Project, string) error
-	GetProjects(string, string) ([]models.ProjectModel, error)
+	GetProjects(string, string, int64, int64) ([]models.ProjectModel, int64, error)
 	DeleteProjectById(string, string) error
 	DeleteProjectByOrganisationId(*gorm.DB, string, string) error
 }
@@ -60,7 +60,7 @@ func (pr *ProjectRepository) UpdateProjectById(project *models.Project, projectI
 	return err
 }
 
-func (pr *ProjectRepository) GetProjects(userId string, organisationId string) (projects []models.ProjectModel, err error) {
+func (pr *ProjectRepository) GetProjects(userId string, organisationId string, offset int64, limit int64) (projects []models.ProjectModel, count int64, err error) {
 	db := pr.db
 
 	db = db.Table("projects")
@@ -69,9 +69,15 @@ func (pr *ProjectRepository) GetProjects(userId string, organisationId string) (
 	db.Joins("left join configurations on projects.id = configurations.project_id")
 	db.Where("projects.organisation_id = ?", organisationId)
 	db.Group("projects.id")
+	db.Offset(int(offset))
+	db.Limit(int(limit))
 	err = db.Find(&projects).Error
 
-	return projects, err
+	if err == nil {
+		db.Count(&count)
+	}
+
+	return projects, count, err
 }
 
 func (pr *ProjectRepository) DeleteProjectById(projectId string, deletedBy string) (err error) {

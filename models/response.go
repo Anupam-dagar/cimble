@@ -35,3 +35,8 @@ type OrganisationsResponse struct {
 	Organisations []OrganisationModel `json:"organisations"`
 	Page          Pagination          `json:"page"`
 }
+
+type ProjectsResponse struct {
+	Projects []ProjectModel `json:"projects"`
+	Page     Pagination     `json:"page"`
+}
