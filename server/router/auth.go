@@ -14,7 +14,7 @@ func (engine Router) AuthRoute(routeGroup *gin.RouterGroup) {
 
 		authRoute.POST("/login", ac.Login)
 		authRoute.POST("/signup", ac.SignUp)
-		authRoute.POST("/refreshToken", middlewares.AuthoriseJwt(), ac.RefreshToken)
+		authRoute.POST("/refreshToken", middlewares.AuthoriseRequest(), ac.RefreshToken)
 		authRoute.POST("/register", ac.Register)
 	}
 }

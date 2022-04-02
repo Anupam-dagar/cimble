@@ -8,7 +8,7 @@ import (
 )
 
 func (engine Router) OrganisationRoute(routeGroup *gin.RouterGroup) {
-	organisationRoute := routeGroup.Group("/organisation", middlewares.AuthoriseJwt())
+	organisationRoute := routeGroup.Group("/organisation", middlewares.AuthoriseRequest())
 	{
 		oc := controllers.NewOrganisationController()
 

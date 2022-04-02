@@ -8,7 +8,7 @@ import (
 )
 
 func (engine Router) ProjectRoute(routeGroup *gin.RouterGroup) {
-	projectRoute := routeGroup.Group("/project", middlewares.AuthoriseJwt())
+	projectRoute := routeGroup.Group("/project", middlewares.AuthoriseRequest())
 	{
 		pc := controllers.NewProjectController()
 

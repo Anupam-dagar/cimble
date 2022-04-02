@@ -11,6 +11,7 @@ type ApiKeysRepositoryInterface interface {
 	CreateApiKey(*models.ApiKey) error
 	DeleteApiKey(string, string) error
 	GetApiKeys(string) ([]models.ApiKey, error)
+	ValidateApiKey(string, []byte) (bool, error)
 }
 
 type ApiKeysRepository struct {
@@ -58,4 +59,19 @@ func (akr *ApiKeysRepository) GetApiKeys(organisationId string) (apiKeys []model
 	err = db.Find(&apiKeys).Error
 
 	return apiKeys, err
+}
+
+func (akr *ApiKeysRepository) ValidateApiKey(organisationId string, apiKey []byte) (isValid bool, err error) {
+	db := akr.Db
+
+	var count int64
+
+	db = db.Table("api_keys")
+	db.Where("organisation_id = ?", organisationId)
+	db.Where("key_hash = ?", apiKey)
+	db.Where("revoked = false")
+	err = db.Count(&count).Error
+
+	isValid = count > 0
+	return isValid, err
 }

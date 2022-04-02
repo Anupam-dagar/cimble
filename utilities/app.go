@@ -22,6 +22,8 @@ func ErrorCodeFromError(err error) int {
 	switch constants.ErrorMessage(err.Error()) {
 	case constants.Unauthorised:
 		return http.StatusUnauthorized
+	case constants.ApiKeyNotPresent:
+		return http.StatusBadRequest
 	default:
 		return http.StatusInternalServerError
 	}

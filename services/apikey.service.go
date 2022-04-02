@@ -12,6 +12,7 @@ type ApiKeyServiceInterface interface {
 	CreateApiKey(models.ApiKeyCreateRequest, string) (models.ApiKey, error)
 	DeleteApiKey(string, string, string) error
 	GetApiKeys(string, string) ([]models.ApiKey, error)
+	IsValidApiKey(string, string) (bool, error)
 }
 
 type ApiKeyService struct {
@@ -77,4 +78,11 @@ func (aks *ApiKeyService) GetApiKeys(organisationId string, userId string) (apiK
 	apiKeys, err = aks.ApiKeyRepository.GetApiKeys(organisationId)
 
 	return apiKeys, err
+}
+
+func (aks *ApiKeyService) IsValidApiKey(organisationId string, apiKey string) (isValid bool, err error) {
+	hashApiKey := utilities.GenerateSha512Hash(apiKey, constants.ApiKey)
+	isValid, err = aks.ApiKeyRepository.ValidateApiKey(organisationId, hashApiKey)
+
+	return isValid, err
 }

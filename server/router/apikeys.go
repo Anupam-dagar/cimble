@@ -8,7 +8,7 @@ import (
 )
 
 func (engine Router) ApiSecretsRoute(routeGroup *gin.RouterGroup) {
-	apiKeyRoute := routeGroup.Group("/api-keys", middlewares.AuthoriseJwt())
+	apiKeyRoute := routeGroup.Group("/api-keys", middlewares.AuthoriseRequest())
 	{
 		akc := controllers.NewApiKeysController()
 
