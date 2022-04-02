@@ -52,13 +52,10 @@ func (cr *ConfigurationRepository) GetConfigurations(projectId string, offset in
 
 	db = db.Table("configurations")
 	db.Where("project_id = ?", projectId)
+	db.Count(&count)
 	db.Offset(int(offset))
 	db.Limit(int(limit))
 	err = db.Find(&configurations).Error
-
-	if err == nil {
-		db.Count(&count)
-	}
 
 	return configurations, count, err
 }

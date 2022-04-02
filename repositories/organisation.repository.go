@@ -66,14 +66,11 @@ func (or *OrganisationRepository) GetOrganisations(userId string, offset int64, 
 	db.Select("organisations.*, count(projects.id) as projects_count")
 	db.Joins("inner join user_mappings on user_mappings.level_id = organisations.id and user_mappings.user_id = ?", userId)
 	db.Joins("left join projects on projects.organisation_id = organisations.id")
-	db.Group("organisations.id")
+	db.Count(&count)
 	db.Offset(int(offset))
 	db.Limit(int(limit))
+	db.Group("organisations.id")
 	err = db.Find(&organisations).Error
-
-	if err == nil {
-		db.Count(&count)
-	}
 
 	return organisations, count, err
 }
