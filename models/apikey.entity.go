@@ -6,6 +6,6 @@ type ApiKey struct {
 	KeyHash        []byte `gorm:"size:64;not null" json:"-"`
 	Privileges     string `gorm:"size:255;not null" json:"privileges"`
 	Revoked        int    `gorm:"default:0;not null" json:"revoked"`
-	ApiKey         string `gorm:"-:all" json:"apiKey"`
+	ApiKey         string `gorm:"-:all" json:"apiKey,omitempty"`
 	BaseEntity
 }

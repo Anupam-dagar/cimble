@@ -14,5 +14,6 @@ func (engine Router) ApiSecretsRoute(routeGroup *gin.RouterGroup) {
 
 		apiKeyRoute.POST("/", akc.CreateApiKey)
 		apiKeyRoute.DELETE("/:organisationId/:id", akc.DeleteApiKey)
+		apiKeyRoute.GET("/:organisationId", akc.GetApiKeys)
 	}
 }

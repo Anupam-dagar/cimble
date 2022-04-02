@@ -10,6 +10,7 @@ import (
 type ApiKeysRepositoryInterface interface {
 	CreateApiKey(*models.ApiKey) error
 	DeleteApiKey(string, string) error
+	GetApiKeys(string) ([]models.ApiKey, error)
 }
 
 type ApiKeysRepository struct {
@@ -46,4 +47,15 @@ func (akr *ApiKeysRepository) DeleteApiKey(apiKeyId string, deletedBy string) (e
 	err = db.Updates(&updateApiKeyEntity).Error
 
 	return err
+}
+
+func (akr *ApiKeysRepository) GetApiKeys(organisationId string) (apiKeys []models.ApiKey, err error) {
+	db := akr.Db
+
+	db = db.Table("api_keys")
+	db.Where("organisation_id = ?", organisationId)
+	db.Where("revoked = false")
+	err = db.Find(&apiKeys).Error
+
+	return apiKeys, err
 }
