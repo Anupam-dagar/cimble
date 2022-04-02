@@ -10,6 +10,7 @@ import (
 
 type ApiKeyServiceInterface interface {
 	CreateApiKey(models.ApiKeyCreateRequest, string) (models.ApiKey, error)
+	DeleteApiKey(string, string, string) error
 }
 
 type ApiKeyService struct {
@@ -45,4 +46,19 @@ func (aks *ApiKeyService) CreateApiKey(createApiKeyRequest models.ApiKeyCreateRe
 
 	apiKey.ApiKey = apiKeyString
 	return apiKey, err
+}
+
+func (aks *ApiKeyService) DeleteApiKey(apiKeyId string, organisationId string, deletedBy string) (err error) {
+	userProjectPrivilege, err := aks.UserMappingRepository.GetUserLevelMapping(deletedBy, organisationId, constants.ORGANISATION)
+	if err != nil {
+		return err
+	}
+
+	if !userProjectPrivilege.IsDelete {
+		return fmt.Errorf(string(constants.Unauthorised))
+	}
+
+	err = aks.ApiKeyRepository.DeleteApiKey(apiKeyId, deletedBy)
+
+	return err
 }

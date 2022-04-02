@@ -13,5 +13,6 @@ func (engine Router) ApiSecretsRoute(routeGroup *gin.RouterGroup) {
 		akc := controllers.NewApiKeysController()
 
 		apiKeyRoute.POST("/", akc.CreateApiKey)
+		apiKeyRoute.DELETE("/:organisationId/:id", akc.DeleteApiKey)
 	}
 }

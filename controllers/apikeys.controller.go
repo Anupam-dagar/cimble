@@ -11,6 +11,7 @@ import (
 
 type ApiKeysControllerInterface interface {
 	CreateApiKey(*gin.Context)
+	DeleteApiKey(*gin.Context)
 }
 
 type ApiKeysController struct {
@@ -39,4 +40,18 @@ func (akc *ApiKeysController) CreateApiKey(ctx *gin.Context) {
 	}
 
 	utilities.ResponseWithSuccess(ctx, http.StatusCreated, apiKey)
+}
+
+func (akc *ApiKeysController) DeleteApiKey(ctx *gin.Context) {
+	userId := ctx.GetString("id")
+	organisationId := ctx.Param("organisationId")
+	apiKeyId := ctx.Param("id")
+
+	err := akc.ApiKeyService.DeleteApiKey(apiKeyId, organisationId, userId)
+	if err != nil {
+		utilities.ResponseWithError(ctx, err)
+		return
+	}
+
+	utilities.ResponseWithSuccess(ctx, http.StatusAccepted, "")
 }
