@@ -60,8 +60,9 @@ func (akc *ApiKeysController) DeleteApiKey(ctx *gin.Context) {
 func (akc *ApiKeysController) GetApiKeys(ctx *gin.Context) {
 	userId := ctx.GetString("id")
 	organisationId := ctx.Param("organisationId")
+	offset, limit := utilities.GetOffsetAndLimit(ctx)
 
-	apiKeys, err := akc.ApiKeyService.GetApiKeys(organisationId, userId)
+	apiKeys, err := akc.ApiKeyService.GetApiKeys(organisationId, userId, offset, limit)
 	if err != nil {
 		utilities.ResponseWithError(ctx, err)
 		return

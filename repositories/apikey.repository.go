@@ -10,7 +10,7 @@ import (
 type ApiKeysRepositoryInterface interface {
 	CreateApiKey(*models.ApiKey) error
 	DeleteApiKey(string, string) error
-	GetApiKeys(string) ([]models.ApiKey, error)
+	GetApiKeys(string, int64, int64) ([]models.ApiKey, int64, error)
 	ValidateApiKey(string, []byte) (bool, error)
 }
 
@@ -50,15 +50,18 @@ func (akr *ApiKeysRepository) DeleteApiKey(apiKeyId string, deletedBy string) (e
 	return err
 }
 
-func (akr *ApiKeysRepository) GetApiKeys(organisationId string) (apiKeys []models.ApiKey, err error) {
+func (akr *ApiKeysRepository) GetApiKeys(organisationId string, offset int64, limit int64) (apiKeys []models.ApiKey, count int64, err error) {
 	db := akr.Db
 
 	db = db.Table("api_keys")
 	db.Where("organisation_id = ?", organisationId)
 	db.Where("revoked = false")
+	db.Count(&count)
+	db.Offset(int(offset))
+	db.Limit(int(limit))
 	err = db.Find(&apiKeys).Error
 
-	return apiKeys, err
+	return apiKeys, count, err
 }
 
 func (akr *ApiKeysRepository) ValidateApiKey(organisationId string, apiKey []byte) (isValid bool, err error) {

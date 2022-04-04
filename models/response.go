@@ -45,3 +45,8 @@ type ConfigurationsResponse struct {
 	Configurations []Configuration `json:"configurations"`
 	Page           Pagination      `json:"page"`
 }
+
+type ApiKeysResponse struct {
+	ApiKeys []ApiKey   `json:"apikeys"`
+	Page    Pagination `json:"page"`
+}

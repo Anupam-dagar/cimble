@@ -11,7 +11,7 @@ import (
 type ApiKeyServiceInterface interface {
 	CreateApiKey(models.ApiKeyCreateRequest, string) (models.ApiKey, error)
 	DeleteApiKey(string, string, string) error
-	GetApiKeys(string, string) ([]models.ApiKey, error)
+	GetApiKeys(string, string, int64, int64) (models.ApiKeysResponse, error)
 	IsValidApiKey(string, string) (bool, error)
 }
 
@@ -65,7 +65,7 @@ func (aks *ApiKeyService) DeleteApiKey(apiKeyId string, organisationId string, d
 	return err
 }
 
-func (aks *ApiKeyService) GetApiKeys(organisationId string, userId string) (apiKeys []models.ApiKey, err error) {
+func (aks *ApiKeyService) GetApiKeys(organisationId string, userId string, offset int64, limit int64) (apiKeys models.ApiKeysResponse, err error) {
 	userProjectPrivilege, err := aks.UserMappingRepository.GetUserLevelMapping(userId, organisationId, constants.ORGANISATION)
 	if err != nil {
 		return apiKeys, err
@@ -75,8 +75,13 @@ func (aks *ApiKeyService) GetApiKeys(organisationId string, userId string) (apiK
 		return apiKeys, fmt.Errorf(string(constants.Unauthorised))
 	}
 
-	apiKeys, err = aks.ApiKeyRepository.GetApiKeys(organisationId)
+	apiKeysData, count, err := aks.ApiKeyRepository.GetApiKeys(organisationId, offset, limit)
+	pagination := utilities.GeneratePage(count, offset, limit)
 
+	apiKeys = models.ApiKeysResponse{
+		ApiKeys: apiKeysData,
+		Page:    pagination,
+	}
 	return apiKeys, err
 }
 
